@@ -1,90 +1,74 @@
-# 斯坦福 CS146S《The Modern Software Developer》中文课程资料包
+# C2 项目：AI for Math 可靠性论文
 
-> 全量翻译 Stanford Vibe Coding 课程（Fall 2025）——从获取、翻译到质检、发布的完整信息处理管线成果。
-> 挑战：C1 课程资料获取与翻译（ch-20260717031336-pxzwy0）｜完成日期：2026-10-03
+> 挑战 ID：ch-20260717031343-8ot0ji ｜ 完成日期：2026-10-04
+>
+> 论文题目：**From Natural Language to Verifiable Reasoning:
+> A Semantic Reduction Framework for Reliable AI Mathematics**
 
-## 这是什么
-
-Stanford CS146S 是 AI 辅助编程方向的标志性课程（讲师 Mihail Eric，2025 秋季）。本资料包将其全部可离线获取的公开资料翻译为中文，供中文学习者零成本使用。
-
-**一手来源**
-
-| 来源 | 说明 |
-|---|---|
-| [themodernsoftware.dev](https://themodernsoftware.dev/) | 课程官网，使用挑战材料包提供的离线缓存（2026-04-02 抓取，含 SHA-256 校验） |
-| [modern-software-dev-assignments](https://github.com/mihail911/modern-software-dev-assignments) | 官方作业仓库（week1/week2 + 环境 README，2026-10-03 抓取） |
-| 材料包 `Vibe_Coding_Playbook.pdf` | 本身即为中文资料（Elite 20 课程手册），收录为参考资料，无需翻译 |
-
-**原始缓存与抓取件归档于 `source/`**，URL 映射见 `source/CS146S_offline/page_map.json`。
-
-## 覆盖范围（详见 [reports/coverage.md](reports/coverage.md)）
-
-| 资料类型 | 总数 | 中文覆盖 | 说明 |
-|---|---|---|---|
-| 课程阅读文章（pages/） | 31 | **27 篇** | 4 篇源缓存即无正文（见已知缺口） |
-| 课程主页（大纲/FAQ） | 1 | **1 篇** | 含 10 周完整教学大纲 |
-| 课程 PDF | 3 | **3 篇** | OpenAI Codex / Anthropic Claude Code / AI 代码评审论文 |
-| 官方作业与写法示范 | 5 | **5 篇** | GitHub week1/week2 |
-| 合计 | 40 | **36（90%）** | 可提取正文覆盖率 **100%** |
-
-- 英文源文 62.1 万字符 → 中文译文 57.8 万字符，全部位于 `translations/`（36 个 Markdown）。
-- 每篇译文带 front matter（原题/来源/译者/日期），文件名与源文一一对应。
-
-## 已知缺口（源缓存即无正文，非管线遗漏）
-
-| 页面 | 原因 | 建议 |
-|---|---|---|
-| `lessons-from-ai-code-reviews` | 源文件 0 字节，原站文章已迁移 | 同主题已有官方 PDF（已翻译）可替代 |
-| `good-context-good-code` | StockApp 博客访问码墙 | 有网络时可人工访问补译 |
-| `how-warp-uses-warp` | Notion 页面需 JS 渲染 | 有网络时可人工复制导出 |
-| `peeking-under-the-hood-of-claude-code` | Medium 反爬 | 同上 |
-| YouTube 视频 ×3、Google Slides ×14 | 课程站点外链，材料包未含字幕/讲义 | 需字幕抓取管线（yt-dlp +字幕），超出本挑战材料范围 |
-
-## 翻译流程（怎么保证质量）
-
-三段式：**机器翻译（AI 批量）+ 术语表统一 + 质检抽检修复**。
-
-1. **抽取**：自研零依赖抽取器把 31 个网页 + 3 个 PDF 转成干净 Markdown（对 React SSR 站点做了 Flight 数据流解码回退，对站点页脚做了可配置截断）；
-2. **术语表**：114 条 EN→CN 词条（`pipeline/glossary.json`），规定 Vibe Coding→氛围编程、agent→智能体、context engineering→上下文工程、scaffolding→脚手架等译法，翻译前强制注入；
-3. **分段**：长文按段落边界切成 60 段（≤15k 字符/段，不切断代码块，软换行防读取截断）；
-4. **并行翻译**：16 个 AI 代理 × 2 波，统一 prompt 模板（`pipeline/prompts/translate_prompt_v2.md`）；
-5. **质检**：`qa_check.py` 自动检查（覆盖度/长度比/残留英文/标题结构/错译词扫描），52/60 直接通过；8 项标记逐一人工抽查（结论见 `reports/qa_review.md`），2 项真问题（页脚误入正文、超长行漏译）定位根因、修管线后重译复检通过。
-
-管线全部脚本与参数见 [`pipeline/README.md`](pipeline/README.md)——换一门课的资料，同样七步可复跑。
-
-## 使用方法
-
-```text
-translations/                 ← 从这里开始读
-├── 000-course-index.md       ← 课程总览+10周大纲+FAQ（门户，建议先读）
-├── prompt-engineering-*.md   ← 第 1 周：提示词工程
-├── mcp-*.md                  ← 第 2 周：MCP 协议
-├── specs-*.md / devin-*.md   ← 第 3 周：AI IDE 与规格说明
-├── claude-code-*.md 等       ← 第 4 周：Claude Code
-├── warp-*.md                 ← 第 5 周：Warp 终端
-├── sast-vs-dast / owasp-* 等 ← 第 6 周：AI 安全
-├── *code-review*.md          ← 第 7 周：AI 代码评审
-├── sre-* / observability-* 等← 第 9 周：SRE 与可观测性
-└── week1/week2_*             ← 官方作业（GitHub）
-术语表.md                      ← 114 条统一译法，阅读时对照
-reports/                      ← 覆盖度报告 / QA 报告 / 人工复核记录
-```
-
-- 译文为 Markdown，任何编辑器/静态站点生成器（MkDocs、VitePress）可直接使用；
-- 每篇开头 `title_en` 为原题，可据此回溯源文件；
-- 引用本资料包请注明原课程：*Stanford CS146S: The Modern Software Developer (Mihail Eric, Fall 2025)*。
-
-## 交付物索引
+## 交付物清单
 
 | 文件 | 说明 |
 |---|---|
-| `README.md` | 本文件 |
-| `AI日志.md` | AI 协作全记录：工具、prompt 演进、踩坑与修复 |
-| `AAR.md` | 七维复盘 |
-| `拿来说明.md` | 4 个关键决策/产出的"怎么用 AI 做出来的"完整案例 |
-| `术语表.md` | 114 条统一术语（机器版 `pipeline/glossary.json`） |
-| `translations/`（36 篇） | 中文译文 |
-| `extracts/`（40 篇） | 英文抽取稿（中间产物，供对照） |
-| `pipeline/` | 可复跑管线（6 个脚本 + prompt 模板 + 装箱计划） |
-| `reports/` | 覆盖度 / QA / 复核记录 |
-| `source/` | 一手资料归档（离线缓存 + GitHub 抓取件） |
+| `paper.tex` | 论文主文件（英文）。含摘要 / 引言 / 三层模型 / 失败模式分类学 / 跨架构对比分析 / SRC-12 清单 / 相关工作 / 局限与可证伪性 / 结论。图 1、图 2 为 TikZ 内联绘制，**无外部图片依赖**，单目录自包含 |
+| `references.bib` | **18 篇**一手文献（要求 ≥8），**全部经官方来源强核验**；核验记录见 `AI日志/AI协作日志.md` 阶段 2 |
+| `AI日志/AI协作日志.md` | 按五个阶段组织的 AI 协作日志：含 prompt 迭代、编译失败与修复记录、**4 处真实引用错误的发现与修正** |
+| `AAR/AAR复盘.md` | 七维 AAR：含 **4 个真实 AI 误导案例**（根因 + 对策）与 6 条改进行动清单 |
+| `paper.pdf` | **编译产物（9 页，已随包交付）**，由 pdflatex 编译链生成，见下方编译验证 |
+
+## 论文核心内容
+
+- **核心论点**：AI4Math 的可靠性瓶颈在**"语义规约层"**（自然语言 → 可验证结构化对象的
+  映射），而非生成或最终验证。纯搜索位于该映射下游；学习型验证器用神经网络逼近它；
+  形式化系统则通过把整个工作流搬进形式语言来绕开它；
+- **原创贡献**：
+  1. **语义规约层五类失败模式分类学**（F1 歧义、F2 类型不完整、F3 不可逆、
+     F4 空洞形式化、F5 格式漂移），每类挂到具体文献的实测证据；
+  2. **四类验证架构的跨论文对比分析**（表 1）：只用原文已发表数字
+     （结果验证器 / 过程奖励模型 / 自动形式化+ATP / 形式化强化学习证明器）；
+  3. **SRC-12 可靠性清单**（表 2，12 条，每条映射到层与失败模式），可操作化；
+- **结论边界**（§7）：显式声明跨论文数字不可比性、清单未经用户实验验证，
+  并给出框架的**可证伪条件**。
+
+## 编译方式
+
+```bash
+# 方式一：标准 TeX 发行版（pdflatex / xelatex 均可，已实测通过）
+pdflatex paper && bibtex paper && pdflatex paper && pdflatex paper
+
+# 方式二：tectonic（一步完成，自动处理 BibTeX）
+tectonic paper.tex
+```
+
+依赖宏包：geometry, amsmath, amssymb, amsthm, booktabs, multirow,
+natbib, tikz (arrows.meta, positioning), hyperref —— **均为 TeX Live / MiKTeX 标准宏包**
+（已刻意移除对 microtype 的依赖，以最大化可移植性）。
+
+## 编译验证记录（2026-10-04，可复现）
+
+- **环境**：TinyTeX (pdfTeX 3.141592653-2.6-1.40.29, TeX Live)；
+- **首轮失败**：`! LaTeX Error: File 'microtype.sty' not found.` → Fatal error, no PDF produced；
+- **修复**：microtype 仅提供微排版优化，与内容/引用/图表/公式无关，故移除此依赖；
+- **最终四步链全部 exit 0**：
+  ```
+  pdflatex -interaction=nonstopmode -halt-on-error paper.tex   # pass 1  → 0
+  bibtex paper                                                 #          → 0
+  pdflatex -interaction=nonstopmode paper.tex                  # pass 2  → 0
+  pdflatex -interaction=nonstopmode paper.tex                  # pass 3  → 0
+  ```
+- **产物**：`paper.pdf`，**9 页**，无 error、无未定义引用、无 bibtex 警告；
+  用 pypdf 解析确认标题/摘要/两张表/参考文献编号均正确渲染。
+
+## 文献核验状态（本项目最关键的严谨性证据）
+
+**18 / 18 篇全部完成官方来源强核验**（访问 arXiv /abs 官方页、Nature 官网、
+Springer / ACM DL、机构出版物页），核验过程**发现并修正 4 处真实错误**：
+
+| # | 文献 | 错误 | 修正 |
+|---|---|---|---|
+| 1 | Uesato et al. 2022 | AI 记忆编号 `2212.08119` | → **arXiv:2211.14275** |
+| 2 | Frieder et al. 2023 | 编号 `2302.13828` 实为"随机森林"论文；作者亦错 | → **arXiv:2301.13867** + 正确作者 |
+| 3 | Trinh et al. AlphaGeometry | 页码 `468–474` | → **Nature 625(7995):476–482** |
+| 4 | de Moura & Ullrich (Lean 4) | 页码 `625–643` | → **625–635** |
+
+> 说明：AI 生成的引用错误率为 **4/18 ≈ 22%**。这既是研究中必须剔除的风险，
+> 也构成论文核心论点（"AI 中间结论必须外部核验"）的一次真实对照实验。

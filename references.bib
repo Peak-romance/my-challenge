@@ -1,0 +1,176 @@
+% =====================================================================
+% references.bib — AI4Math 可靠性论文引用库
+% 所有条目均经过人工核验（arXiv 编号 / 会议 / 期刊信息可独立查证），
+% 核验记录见 AI日志/AI协作日志.md（Day 2 文献核验小节）。
+% =====================================================================
+
+% ---------- 基准数据集与评测 ----------
+
+@article{cobbe2021gsm8k,
+  author  = {Cobbe, Karl and Kosaraju, Vineet and Bavarian, Mohammad and Chen, Mark and Jun, Heewoo and Kaiser, Lukasz and Plappert, Matthias and Tworek, Jerry and Hilton, Jacob and Nakano, Reiichiro and Hesse, Christopher and Schulman, John},
+  title   = {Training Verifiers to Solve Math Word Problems},
+  journal = {arXiv preprint arXiv:2110.14168},
+  year    = {2021}
+}
+
+@inproceedings{hendrycks2021math,
+  author    = {Hendrycks, Dan and Burns, Collin and Kadavath, Saurav and Arora, Akul and Basart, Steven and Tang, Eric and Song, Dawn and Steinhardt, Jacob},
+  title     = {Measuring Mathematical Problem Solving with the {MATH} Dataset},
+  booktitle = {NeurIPS Datasets and Benchmarks Track},
+  year      = {2021}
+}
+
+@inproceedings{lewkowycz2022minerva,
+  author    = {Lewkowycz, Aitor and Andreassen, Anders and Dohan, David and Dyer, Ethan and Michalewski, Henryk and Ramasesh, Vinay and Slone, Ambrose and Anil, Cem and Schlag, Imanol and Gutman-Solo, Theo and Wu, Yuhuai and Neyshabur, Behnam and Gur-Ari, Guy and Misra, Vedant},
+  title     = {Solving Quantitative Reasoning Problems with Language Models},
+  booktitle = {Advances in Neural Information Processing Systems (NeurIPS)},
+  volume    = {35},
+  year      = {2022}
+}
+
+@inproceedings{frieder2023chatgpt,
+  author    = {Frieder, Simon and Pinchetti, Luca and Chevalier, Alexis and Griffiths, Ryan-Rhys and Salvatori, Tommaso and Lukasiewicz, Thomas and Petersen, Philipp Christian and Berner, Julius},
+  title     = {Mathematical Capabilities of {ChatGPT}},
+  booktitle = {Advances in Neural Information Processing Systems (NeurIPS) Datasets and Benchmarks Track},
+  note      = {arXiv:2301.13867},
+  year      = {2023}
+}
+
+% ---------- 非形式推理：CoT 与程序增强 ----------
+
+@inproceedings{wei2022cot,
+  author    = {Wei, Jason and Wang, Xuezhi and Schuurmans, Dale and Bosma, Maarten and Ichter, Brian and Xia, Fei and Chi, Ed and Le, Quoc V. and Zhou, Denny},
+  title     = {Chain-of-Thought Prompting Elicits Reasoning in Large Language Models},
+  booktitle = {Advances in Neural Information Processing Systems (NeurIPS)},
+  volume    = {35},
+  year      = {2022}
+}
+
+@inproceedings{gao2023pal,
+  author    = {Gao, Luyu and Madaan, Aman and Zhou, Shuyan and Alon, Uri and Liu, Pengfei and Yang, Yiming and Callan, Jamie and Neubig, Graham},
+  title     = {{PAL}: Program-aided Language Models},
+  booktitle = {Proceedings of the 40th International Conference on Machine Learning (ICML)},
+  year      = {2023}
+}
+
+@article{chen2023pot,
+  author  = {Chen, Wenhu and Ma, Xueguang and Wang, Xinyi and Cohen, William W.},
+  title   = {Program of Thoughts Prompting: Disentangling Computation from Reasoning for Numerical Reasoning Tasks},
+  journal = {Transactions on Machine Learning Research (TMLR)},
+  year    = {2023}
+}
+
+@inproceedings{schick2023toolformer,
+  author    = {Schick, Timo and Dwivedi-Yu, Jane and Dess{\`i}, Roberto and Raileanu, Roberta and Lomeli, Maria and Hambro, Eric and Zettlemoyer, Luke and Cancedda, Nicola and Scialom, Thomas},
+  title     = {Toolformer: Language Models Can Teach Themselves to Use Tools},
+  booktitle = {Advances in Neural Information Processing Systems (NeurIPS)},
+  volume    = {36},
+  year      = {2023}
+}
+
+% ---------- 验证监督：结果监督 vs 过程监督 ----------
+
+@inproceedings{uesato2022feedback,
+  author    = {Uesato, Jonathan and Kushman, Nate and Kumar, Ramana and Song, Francis and Siegel, Noah and Wang, Lisa and Creswell, Antonia and Irving, Geoffrey and Higgins, Irina},
+  title     = {Solving Math Word Problems with Process- and Outcome-based Feedback},
+  booktitle = {NeurIPS 2022 Workshop on MATH-AI},
+  note      = {arXiv:2211.14275},
+  year      = {2022}
+}
+
+@inproceedings{lightman2024verify,
+  author    = {Lightman, Hunter and Kosaraju, Vineet and Burda, Yura and Edwards, Harri and Baker, Bowen and Lee, Teddy and Leike, Jan and Schulman, John and Sutskever, Ilya and Cobbe, Karl},
+  title     = {Let's Verify Step by Step},
+  booktitle = {The Twelfth International Conference on Learning Representations (ICLR)},
+  year      = {2024}
+}
+
+% ---------- 形式化与自动定理证明 ----------
+
+@article{polu2020gptf,
+  author  = {Polu, Stanislas and Sutskever, Ilya},
+  title   = {Generative Language Modeling for Automated Theorem Proving},
+  journal = {arXiv preprint arXiv:2009.03393},
+  year    = {2020}
+}
+
+@inproceedings{lample2022htps,
+  author    = {Lample, Guillaume and Lacroix, Timoth{\'e}e and Lachaux, Marie-Anne and Rodriguez, Thibaut and Hayat, Amaury and Lavril, Th{\'e}o and Ebner, Gabriel and Martinet, Xavier},
+  title     = {HyperTree Proof Search for Neural Theorem Proving},
+  booktitle = {Advances in Neural Information Processing Systems (NeurIPS)},
+  volume    = {35},
+  year      = {2022}
+}
+
+@inproceedings{jiang2023draft,
+  author    = {Jiang, Albert Q. and Welleck, Sean and Zhou, Jin Peng and Lacroix, Timoth{\'e}e and Liu, Jiacheng and Li, Wenda and Lample, Guillaume},
+  title     = {Draft, Sketch, and Prove: Guiding Formal Theorem Provers with Informal Proofs},
+  booktitle = {The Eleventh International Conference on Learning Representations (ICLR)},
+  year      = {2023}
+}
+
+@inproceedings{yang2023leandojo,
+  author    = {Yang, Kaiyu and Swope, Aidan and Gu, Alex and Chalamala, Rahul and Song, Peiyi and Yu, Sainath and Godil, Saad and Prenger, Ryan J. and Anandkumar, Animashree},
+  title     = {{LeanDojo}: Theorem Proving with Retrieval-Augmented Language Models},
+  booktitle = {Advances in Neural Information Processing Systems (NeurIPS) Datasets and Benchmarks Track},
+  year      = {2023}
+}
+
+@article{trinh2024alphageometry,
+  author  = {Trinh, Trieu H. and Wu, Yuhuai and Le, Quoc V. and He, Hening and Luong, Thang},
+  title   = {Solving Olympiad Geometry without Human Demonstrations},
+  journal = {Nature},
+  volume  = {625},
+  number  = {7995},
+  pages   = {476--482},
+  year    = {2024},
+  doi     = {10.1038/s41586-023-06747-5}
+}
+
+@article{hubert2025alphaproof,
+  author  = {Hubert, Thomas and Mehta, Rishi and Sartran, Laurent and Horv{\'a}th, Miklos Z. and Zuzic, Goran and others},
+  title   = {Olympiad-level Formal Mathematical Reasoning with Reinforcement Learning},
+  journal = {Nature},
+  volume  = {651},
+  pages   = {607--613},
+  year    = {2025},
+  doi     = {10.1038/s41586-025-09833-y}
+}
+
+@article{zhou2024dtv,
+  author  = {Zhou, Jin Peng and Staats, Charles E. and Li, Wenda and Szegedy, Christian and Weinberger, Kilian Q. and Wu, Yuhuai},
+  title   = {Don't Trust: Verify---Grounding {LLM} Quantitative Reasoning with Autoformalization},
+  journal = {arXiv preprint arXiv:2403.18120},
+  year    = {2024}
+}
+
+% ---------- 形式系统与基础 ----------
+
+@inproceedings{demoura2021lean4,
+  author    = {de Moura, Leonardo and Ullrich, Sebastian},
+  title     = {The {Lean 4} Theorem Prover and Programming Language},
+  booktitle = {Automated Deduction -- CADE 28},
+  series    = {Lecture Notes in Computer Science},
+  volume    = {12673},
+  pages     = {625--635},
+  publisher = {Springer},
+  year      = {2021}
+}
+
+@article{hales2017kepler,
+  author  = {Hales, Thomas and Adams, Mark and Bauer, Gertrud and Dang, Tat Dat and Harrison, John and Hoang, Truong Le and Kaliszyk, Cezary and Magron, Victor and McLaughlin, Sean and Nguyen, Tat Thang and others},
+  title   = {A Formal Proof of the {Kepler} Conjecture},
+  journal = {Forum of Mathematics, Pi},
+  volume  = {5},
+  pages   = {e12},
+  year    = {2017}
+}
+
+% ---------- 数学语言模型 ----------
+
+@inproceedings{azerbayev2024llemma,
+  author    = {Azerbayev, Zhangir and Schoelkopf, Hailey and Paster, Keiran and Santos, Marco D. and McAleer, Stephen and Jiang, Albert Q. and Deng, Jason and Biderman, Stella and Welleck, Sean},
+  title     = {{Llemma}: An Open Language Model for Mathematics},
+  booktitle = {The Twelfth International Conference on Learning Representations (ICLR)},
+  year      = {2024}
+}
