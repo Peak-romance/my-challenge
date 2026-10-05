@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>郑州西亚斯学院 · 周边地点交互地图</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+  :root {
+    --bg: #f6f7f9; --panel: #ffffff; --ink: #1f2937; --muted: #6b7280;
+    --line: #e5e7eb; --accent: #2563eb;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; height: 100%; font-family: "Segoe UI", "Microsoft YaHei", system-ui, sans-serif; color: var(--ink); background: var(--bg); }
+  #app { display: flex; height: 100vh; overflow: hidden; }
+  #map { flex: 1; min-width: 0; }
+
+  #panel { width: 380px; background: var(--panel); border-left: 1px solid var(--line); display: flex; flex-direction: column; }
+  .panel-head { padding: 18px 20px 14px; border-bottom: 1px solid var(--line); }
+  .panel-head h1 { margin: 0 0 6px; font-size: 17px; letter-spacing: .2px; }
+  .panel-head p { margin: 0; font-size: 12.5px; color: var(--muted); line-height: 1.6; }
+
+  .filters { padding: 12px 20px; border-bottom: 1px solid var(--line); display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip { border: 1px solid var(--line); background: #fff; color: var(--muted); border-radius: 999px; padding: 4px 11px; font-size: 12px; cursor: pointer; transition: .15s; }
+  .chip:hover { border-color: var(--c); color: var(--c); }
+  .chip.on { background: var(--c); border-color: var(--c); color: #fff; }
+  .chip .cnt { opacity: .75; font-size: 11px; }
+
+  .list { flex: 1; overflow-y: auto; padding: 8px 12px 20px; }
+  .card { border: 1px solid var(--line); border-radius: 10px; padding: 11px 13px; margin-bottom: 9px; cursor: pointer; transition: .15s; background: #fff; }
+  .card:hover { border-color: var(--accent); box-shadow: 0 2px 10px rgba(37,99,235,.09); }
+  .card.active { border-color: var(--accent); background: #f0f6ff; }
+  .card .row { display: flex; align-items: baseline; gap: 8px; }
+  .card .idx { font-size: 11px; font-weight: 700; color: #fff; background: var(--dot, #475569); border-radius: 5px; padding: 1px 6px; flex: none; }
+  .card h3 { margin: 0; font-size: 13.5px; font-weight: 600; }
+  .card .en { margin: 2px 0 0 0; font-size: 11.5px; color: var(--muted); }
+  .card .desc { margin: 7px 0 0; font-size: 12.5px; color: #374151; line-height: 1.65; }
+  .card .meta { margin-top: 7px; display: flex; gap: 10px; font-size: 11px; color: var(--muted); flex-wrap: wrap; }
+  .stars { color: #f59e0b; letter-spacing: 1px; }
+
+  .foot { padding: 10px 20px 14px; border-top: 1px solid var(--line); font-size: 11px; color: var(--muted); line-height: 1.7; }
+  .badge { display: inline-block; background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; border-radius: 5px; padding: 1px 6px; font-size: 10.5px; margin-right: 5px; }
+
+  .leaflet-popup-content { margin: 12px 14px; font-size: 12.5px; line-height: 1.65; }
+  .leaflet-popup-content b { font-size: 13.5px; }
+  .pop-en { color: #6b7280; font-size: 11.5px; }
+  .pop-meta { margin-top: 6px; color: #6b7280; font-size: 11px; }
+
+  @media (max-width: 860px) {
+    #app { flex-direction: column; }
+    #panel { width: 100%; height: 46vh; border-left: none; border-top: 1px solid var(--line); }
+  }
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="map"></div>
+  <aside id="panel">
+    <div class="panel-head">
+      <h1>郑州西亚斯学院 · 周边地点交互地图</h1>
+      <p>共 12 个地点 · 由本地部署的 Gemma 4 模型生成 · 点击标记查看详情，支持分类筛选与缩放</p>
+    </div>
+    <div class="filters" id="filters">
+      <button class="chip on" data-cat="__all__" style="--c:#2563eb">全部 <span class="cnt" data-cnt="__all__"></span></button>
+      <button class="chip" data-cat="campus" style="--c:#2563eb">校园 <span class="cnt" data-cnt="campus"></span></button><button class="chip" data-cat="culture" style="--c:#b45309">文化 <span class="cnt" data-cnt="culture"></span></button><button class="chip" data-cat="food" style="--c:#c2410c">餐饮 <span class="cnt" data-cnt="food"></span></button><button class="chip" data-cat="nature" style="--c:#15803d">自然 <span class="cnt" data-cnt="nature"></span></button><button class="chip" data-cat="transport" style="--c:#6d28d9">交通 <span class="cnt" data-cnt="transport"></span></button>
+    </div>
+    <div class="list" id="list"></div>
+    <div class="foot">
+      <span class="badge">本地推理</span>gemma4:e2b-it-q4_K_M<br>
+      地点数据由本地 Gemma 4 模型生成 · 坐标经本地地名索引校验<br>
+      生成时间：2026-10-06 02:07:43
+    </div>
+  </aside>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const CENTER = [34.3958, 113.7405];
+const LANDMARKS = [{"name": "SIAS University", "name_zh": "郑州西亚斯学院", "latitude": 34.3958, "longitude": 113.7405, "description": "挑战中心基点。中美合作办学的本科院校，校园以欧式建筑群与大面积水系景观著称，被誉为「中原最美校园」之一，是本次地图的中心参考点。", "category": "campus", "importance": 5, "place_query": "郑州西亚斯学院", "distance_from_center_km": 0.0, "resolved_name": "郑州西亚斯学院"}, {"name": "SIAS Library", "name_zh": "西亚斯学院图书馆", "latitude": 34.3966, "longitude": 113.7398, "description": "校园中轴线上的标志性建筑，藏书逾百万册，顶层阅览区可俯瞰整个中心湖景，是学生自习与访客参观的首选。", "category": "campus", "importance": 4, "place_query": "西亚斯图书馆", "distance_from_center_km": 0.11, "resolved_name": "西亚斯学院图书馆"}, {"name": "Yellow Emperor's Hometown", "name_zh": "黄帝故里景区", "latitude": 34.4105, "longitude": 113.7301, "description": "国家 4A 级景区，相传为轩辕黄帝出生地。每年农历三月三举办拜祖大典，是海内外华人寻根拜祖的重要场所。", "category": "culture", "importance": 5, "place_query": "黄帝故里", "distance_from_center_km": 1.89, "resolved_name": "黄帝故里景区"}, {"name": "Zhenghan Ancient City Ruins", "name_zh": "郑韩故城遗址", "latitude": 34.4019, "longitude": 113.7181, "description": "春秋战国时期郑国与韩国都城遗址，全国重点文物保护单位。城墙夯土遗迹保存完整，是了解中原先秦文明的重要现场。", "category": "culture", "importance": 4, "place_query": "郑韩故城遗址", "distance_from_center_km": 2.16, "resolved_name": "郑韩故城遗址"}, {"name": "Xinzheng Museum", "name_zh": "新郑市博物馆", "latitude": 34.3985, "longitude": 113.7288, "description": "馆藏以郑韩故城出土文物为核心，青铜器与玉器陈列尤为精彩，是快速理解新郑八千年历史脉络的窗口。", "category": "culture", "importance": 3, "place_query": "新郑市博物馆", "distance_from_center_km": 1.11, "resolved_name": "新郑市博物馆"}, {"name": "Zhengfeng Park", "name_zh": "郑风苑公园", "latitude": 34.4022, "longitude": 113.7256, "description": "以《诗经·郑风》为主题的滨水公园，沿河设置有诗碑与亭廊，春日杨柳拂岸，是周边居民散步骑行的日常去处。", "category": "nature", "importance": 3, "place_query": "郑风苑", "distance_from_center_km": 1.54, "resolved_name": "郑风苑公园"}, {"name": "Xinzheng People's Park", "name_zh": "新郑市人民公园", "latitude": 34.4038, "longitude": 113.7332, "description": "城区内规模较大的综合性公园，绿化覆盖率高，配有健身步道与儿童游乐区，适合周末家庭休闲。", "category": "nature", "importance": 2, "place_query": "新郑市人民公园", "distance_from_center_km": 1.11, "resolved_name": "新郑市人民公园"}, {"name": "SIAS Commercial Street", "name_zh": "西亚斯学院周边商业街", "latitude": 34.3946, "longitude": 113.7442, "description": "东门外的学生生活街区，汇集河南本地小吃与各地风味，晚间尤其热闹，是体验校园烟火气的最佳地点。", "category": "food", "importance": 4, "place_query": "西亚斯夜市", "distance_from_center_km": 0.36, "resolved_name": "西亚斯学院周边商业街"}, {"name": "SIAS Gymnasium", "name_zh": "西亚斯学院体育馆", "latitude": 34.3942, "longitude": 113.7421, "description": "校内综合性体育场馆，含标准游泳馆、篮球馆与羽毛球场地，承办过省级大学生赛事。", "category": "campus", "importance": 3, "place_query": "西亚斯体育馆", "distance_from_center_km": 0.23, "resolved_name": "西亚斯学院体育馆"}, {"name": "SIAS Student Center", "name_zh": "西亚斯学生活动中心", "latitude": 34.3951, "longitude": 113.7389, "description": "学生社团活动与文体演出的主要场地，常年举办音乐节、创业市集与国际文化节。", "category": "campus", "importance": 3, "place_query": "西亚斯学生活动中心", "distance_from_center_km": 0.17, "resolved_name": "西亚斯学生活动中心"}, {"name": "Xinzheng Railway Station", "name_zh": "新郑火车站", "latitude": 34.3872, "longitude": 113.7215, "description": "城区内的铁路客运站，有普速列车停靠，距校区约 2 公里，是短途出行的经济选择。", "category": "transport", "importance": 2, "place_query": "新郑站", "distance_from_center_km": 1.99, "resolved_name": "新郑火车站"}, {"name": "Zhengzhou Xinzheng International Airport", "name_zh": "郑州新郑国际机场", "latitude": 34.5197, "longitude": 113.8408, "description": "中部地区重要航空枢纽，距校区约 14 公里，有城际铁路与机场巴士连接，通达国内外主要城市。", "category": "transport", "importance": 4, "place_query": "郑州新郑国际机场", "distance_from_center_km": 16.56, "resolved_name": "郑州新郑国际机场"}];
+const CAT_STYLE = {"campus": {"color": "#2563eb", "label": "校园", "icon": "校"}, "culture": {"color": "#b45309", "label": "文化", "icon": "文"}, "nature": {"color": "#15803d", "label": "自然", "icon": "景"}, "food": {"color": "#c2410c", "label": "餐饮", "icon": "食"}, "transport": {"color": "#6d28d9", "label": "交通", "icon": "行"}, "other": {"color": "#475569", "label": "其他", "icon": "点"}};
+const EXTRAS = {"distance_matrix": [{"from": "郑州西亚斯学院", "to": "西亚斯学院图书馆", "distance_km": 0.11}, {"from": "西亚斯学院图书馆", "to": "郑州西亚斯学院", "distance_km": 0.11}, {"from": "郑州西亚斯学院", "to": "西亚斯学生活动中心", "distance_km": 0.17}, {"from": "西亚斯学生活动中心", "to": "郑州西亚斯学院", "distance_km": 0.17}, {"from": "西亚斯学院图书馆", "to": "西亚斯学生活动中心", "distance_km": 0.19}, {"from": "西亚斯学生活动中心", "to": "西亚斯学院图书馆", "distance_km": 0.19}, {"from": "西亚斯学院周边商业街", "to": "西亚斯学院体育馆", "distance_km": 0.2}, {"from": "西亚斯学院体育馆", "to": "西亚斯学院周边商业街", "distance_km": 0.2}, {"from": "郑州西亚斯学院", "to": "西亚斯学院体育馆", "distance_km": 0.23}, {"from": "西亚斯学院体育馆", "to": "郑州西亚斯学院", "distance_km": 0.23}, {"from": "西亚斯学院体育馆", "to": "西亚斯学生活动中心", "distance_km": 0.31}, {"from": "西亚斯学生活动中心", "to": "西亚斯学院体育馆", "distance_km": 0.31}, {"from": "西亚斯学院图书馆", "to": "西亚斯学院体育馆", "distance_km": 0.34}, {"from": "西亚斯学院体育馆", "to": "西亚斯学院图书馆", "distance_km": 0.34}, {"from": "郑州西亚斯学院", "to": "西亚斯学院周边商业街", "distance_km": 0.36}, {"from": "西亚斯学院周边商业街", "to": "郑州西亚斯学院", "distance_km": 0.36}, {"from": "西亚斯学院图书馆", "to": "西亚斯学院周边商业街", "distance_km": 0.46}, {"from": "西亚斯学院周边商业街", "to": "西亚斯学院图书馆", "distance_km": 0.46}, {"from": "西亚斯学院周边商业街", "to": "西亚斯学生活动中心", "distance_km": 0.49}, {"from": "西亚斯学生活动中心", "to": "西亚斯学院周边商业街", "distance_km": 0.49}, {"from": "新郑市博物馆", "to": "郑风苑公园", "distance_km": 0.51}, {"from": "郑风苑公园", "to": "新郑市博物馆", "distance_km": 0.51}, {"from": "郑韩故城遗址", "to": "郑风苑公园", "distance_km": 0.69}, {"from": "郑风苑公园", "to": "郑韩故城遗址", "distance_km": 0.69}, {"from": "新郑市博物馆", "to": "新郑市人民公园", "distance_km": 0.71}, {"from": "新郑市人民公园", "to": "新郑市博物馆", "distance_km": 0.71}, {"from": "郑风苑公园", "to": "新郑市人民公园", "distance_km": 0.72}, {"from": "新郑市人民公园", "to": "郑风苑公园", "distance_km": 0.72}, {"from": "黄帝故里景区", "to": "新郑市人民公园", "distance_km": 0.8}, {"from": "新郑市人民公园", "to": "黄帝故里景区", "distance_km": 0.8}]};
+
+const map = L.map('map', { zoomControl: true, scrollWheelZoom: true }).setView(CENTER, 15);
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  maxZoom: 19,
+  attribution: '&copy; OpenStreetMap contributors'
+}).addTo(map);
+
+// 中心圈：1km / 3km 半径参考
+[1, 3].forEach((km, i) => {
+  L.circle(CENTER, {
+    radius: km * 1000,
+    color: '#2563eb',
+    weight: 1,
+    opacity: 0.35,
+    fillColor: '#2563eb',
+    fillOpacity: 0.03,
+    dashArray: i === 0 ? '4 4' : '8 6'
+  }).addTo(map).bindTooltip(km + ' km 半径', {permanent: false});
+});
+
+// 中心标记
+L.circleMarker(CENTER, {
+  radius: 8, color: '#fff', weight: 3, fillColor: '#dc2626', fillOpacity: 1
+}).addTo(map).bindPopup('<b>郑州西亚斯学院</b><br><span class="pop-en">SIAS University</span><br>地图中心基点');
+
+function stars(n) { return '★'.repeat(n) + '☆'.repeat(5 - n); }
+
+const markers = {};
+LANDMARKS.forEach((lm, i) => {
+  const style = CAT_STYLE[lm.category] || CAT_STYLE.other;
+  const marker = L.circleMarker([lm.latitude, lm.longitude], {
+    radius: 7 + lm.importance,
+    color: '#fff',
+    weight: 2.5,
+    fillColor: style.color,
+    fillOpacity: 0.92
+  }).addTo(map);
+
+  const dist = (lm.distance_from_center_km !== null && lm.distance_from_center_km !== undefined)
+    ? '<div class="pop-meta">距中心 ' + lm.distance_from_center_km + ' km</div>' : '';
+
+  marker.bindPopup(
+    '<b>' + lm.name_zh + '</b><br>' +
+    '<span class="pop-en">' + lm.name + '</span><br>' +
+    lm.description +
+    '<div class="pop-meta">' + style.label + ' · 重要性 ' + stars(lm.importance) +
+    '<br>' + lm.latitude.toFixed(5) + ', ' + lm.longitude.toFixed(5) + '</div>' + dist
+  );
+  marker.bindTooltip(lm.name_zh, { direction: 'top', offset: [0, -6] });
+  markers[i] = marker;
+});
+
+// 侧栏列表
+const listEl = document.getElementById('list');
+const activeCat = { value: '__all__' };
+
+function render() {
+  listEl.innerHTML = '';
+  const visible = LANDMARKS.map((lm, i) => [lm, i])
+    .filter(([lm]) => activeCat.value === '__all__' || lm.category === activeCat.value)
+    .sort((a, b) => b[0].importance - a[0].importance);
+
+  visible.forEach(([lm, i], order) => {
+    const style = CAT_STYLE[lm.category] || CAT_STYLE.other;
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.style.setProperty('--dot', style.color);
+    const dist = (lm.distance_from_center_km !== null && lm.distance_from_center_km !== undefined)
+      ? '<span>距中心 ' + lm.distance_from_center_km + ' km</span>' : '';
+    card.innerHTML =
+      '<div class="row"><span class="idx">' + (order + 1) + '</span><h3>' + lm.name_zh + '</h3></div>' +
+      '<p class="en">' + lm.name + '</p>' +
+      '<p class="desc">' + lm.description + '</p>' +
+      '<div class="meta"><span>' + style.label + '</span><span class="stars">' + stars(lm.importance) + '</span>' + dist + '</div>';
+    card.onclick = () => {
+      map.setView([lm.latitude, lm.longitude], 17, { animate: true });
+      markers[i].openPopup();
+      document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+      card.classList.add('active');
+    };
+    listEl.appendChild(card);
+  });
+}
+
+// 分类计数 + 过滤
+document.querySelectorAll('.chip').forEach(chip => {
+  const cat = chip.dataset.cat;
+  const n = cat === '__all__' ? LANDMARKS.length : LANDMARKS.filter(l => l.category === cat).length;
+  const span = chip.querySelector('.cnt');
+  if (span) span.textContent = '(' + n + ')';
+  chip.onclick = () => {
+    document.querySelectorAll('.chip').forEach(c => c.classList.remove('on'));
+    chip.classList.add('on');
+    activeCat.value = cat;
+    // 分类过滤同步到地图图层
+    LANDMARKS.forEach((lm, i) => {
+      const show = cat === '__all__' || lm.category === cat;
+      if (show) { markers[i].addTo(map); } else { map.removeLayer(markers[i]); }
+    });
+    render();
+  };
+});
+
+render();
+
+// 若有距离矩阵，在面板底部补充最近邻统计
+if (EXTRAS.distance_matrix && EXTRAS.distance_matrix.length) {
+  const foot = document.querySelector('.foot');
+  const nearest = EXTRAS.distance_matrix[0];
+  const div = document.createElement('div');
+  div.style.marginTop = '6px';
+  div.textContent = '最近邻：' + nearest.from + ' → ' + nearest.to + ' ' + nearest.distance_km + ' km';
+  foot.appendChild(div);
+}
+</script>
+</body>
+</html>
