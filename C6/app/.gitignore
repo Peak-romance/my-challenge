@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# 数据库与上传文件（运行时数据不入库）
+database/data/
+backend/data/
+*.db
+*.sqlite3
+
+# 本地运行产物（一键脚本生成的日志与 PID）
+logs/
+.env
+tools/_runtime_*/
+
+# 编辑器 / 系统
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# 临时文件
+tools/_tmp_*
+tools/_t.js
