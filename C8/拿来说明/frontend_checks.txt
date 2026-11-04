@@ -1,0 +1,20 @@
+===== check_dom_refs.py =====
+静态一致性检查通过：无缺失 id / 未定义函数 / 断链
+
+===== check_js.js =====
+OK   D:\闲置平台代码\frontend\admin\assets.html block1
+OK   D:\闲置平台代码\frontend\admin\logs.html block1
+OK   D:\闲置平台代码\frontend\admin\orgs.html block1
+OK   D:\闲置平台代码\frontend\admin\stats.html block1
+OK   D:\闲置平台代码\frontend\admin\users.html block1
+OK   D:\闲置平台代码\frontend\index.html block1
+OK   D:\闲置平台代码\frontend\js\api.js
+OK   D:\闲置平台代码\frontend\js\common.js
+OK   D:\闲置平台代码\frontend\user\asset.html block1
+OK   D:\闲置平台代码\frontend\user\browse.html block1
+OK   D:\闲置平台代码\frontend\user\handover.html block1
+OK   D:\闲置平台代码\frontend\user\home.html block1
+OK   D:\闲置平台代码\frontend\user\publish.html block1
+OK   D:\闲置平台代码\frontend\user\records.html block1
+
+全部通过
