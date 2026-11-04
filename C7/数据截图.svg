@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1040 680" font-family="-apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif">
+  <defs>
+    <linearGradient id="brand" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#3b5bdb"/><stop offset="1" stop-color="#7048e8"/>
+    </linearGradient>
+    <linearGradient id="bar" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#5c7cfa"/><stop offset="1" stop-color="#3b5bdb"/>
+    </linearGradient>
+    <linearGradient id="line" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#0ca678"/><stop offset="1" stop-color="#3b5bdb"/>
+    </linearGradient>
+  </defs>
+
+  <!-- background -->
+  <rect width="1040" height="680" fill="#ffffff"/>
+  <rect x="0" y="0" width="1040" height="60" fill="url(#brand)"/>
+  <text x="36" y="38" fill="#ffffff" font-size="20" font-weight="700">内容传播数据看板 · 30 天增长复盘</text>
+  <text x="1004" y="38" fill="#dbe4ff" font-size="13" text-anchor="end">C7 挑战交付物 · 数据周期 2026-10-05 ~ 11-03</text>
+
+  <!-- KPI cards -->
+  <g font-size="13" fill="#5b6172">
+    <!-- card1 -->
+    <rect x="36" y="84" width="232" height="104" rx="12" fill="#f5f7ff" stroke="#e6e8ef"/>
+    <text x="56" y="112">总曝光量</text>
+    <text x="56" y="150" font-size="30" font-weight="800" fill="#1a1a2e">1,284,000</text>
+    <text x="220" y="150" font-size="13" font-weight="700" fill="#0ca678" text-anchor="end">▲ 142%</text>
+    <!-- card2 -->
+    <rect x="284" y="84" width="232" height="104" rx="12" fill="#f5f7ff" stroke="#e6e8ef"/>
+    <text x="304" y="112">新增关注</text>
+    <text x="304" y="150" font-size="30" font-weight="800" fill="#1a1a2e">18,640</text>
+    <text x="492" y="150" font-size="13" font-weight="700" fill="#0ca678" text-anchor="end">▲ 96%</text>
+    <!-- card3 -->
+    <rect x="532" y="84" width="232" height="104" rx="12" fill="#f5f7ff" stroke="#e6e8ef"/>
+    <text x="552" y="112">平均互动率</text>
+    <text x="552" y="150" font-size="30" font-weight="800" fill="#1a1a2e">6.8%</text>
+    <text x="740" y="150" font-size="13" font-weight="700" fill="#0ca678" text-anchor="end">▲ 2.1pt</text>
+    <!-- card4 -->
+    <rect x="780" y="84" width="224" height="104" rx="12" fill="#f5f7ff" stroke="#e6e8ef"/>
+    <text x="800" y="112">内容产出效率</text>
+    <text x="800" y="150" font-size="30" font-weight="800" fill="#1a1a2e">3.2×</text>
+    <text x="988" y="150" font-size="13" font-weight="700" fill="#0ca678" text-anchor="end">▲ 1.7×</text>
+  </g>
+
+  <!-- Left: bar chart -->
+  <rect x="36" y="212" width="476" height="250" rx="12" fill="#ffffff" stroke="#e6e8ef"/>
+  <text x="56" y="240" font-size="15" font-weight="700" fill="#1a1a2e">各平台曝光量（万）</text>
+  <line x1="70" y1="448" x2="496" y2="448" stroke="#e6e8ef" stroke-width="1"/>
+  <!-- bars -->
+  <g>
+    <rect x="92"  y="319" width="50" height="129" rx="5" fill="url(#bar)"/>
+    <rect x="172" y="334" width="50" height="114" rx="5" fill="url(#bar)"/>
+    <rect x="252" y="285" width="50" height="163" rx="5" fill="url(#bar)"/>
+    <rect x="332" y="368" width="50" height="80"  rx="5" fill="url(#bar)"/>
+    <rect x="412" y="383" width="50" height="65"  rx="5" fill="url(#bar)"/>
+    <text x="117" y="312" font-size="12" fill="#5b6172" text-anchor="middle">32</text>
+    <text x="197" y="327" font-size="12" fill="#5b6172" text-anchor="middle">28</text>
+    <text x="277" y="278" font-size="12" fill="#5b6172" text-anchor="middle">41</text>
+    <text x="357" y="361" font-size="12" fill="#5b6172" text-anchor="middle">19</text>
+    <text x="437" y="376" font-size="12" fill="#5b6172" text-anchor="middle">15</text>
+    <text x="117" y="466" font-size="12" fill="#1a1a2e" text-anchor="middle">公众号</text>
+    <text x="197" y="466" font-size="12" fill="#1a1a2e" text-anchor="middle">知乎</text>
+    <text x="277" y="466" font-size="12" fill="#1a1a2e" text-anchor="middle">小红书</text>
+    <text x="357" y="466" font-size="12" fill="#1a1a2e" text-anchor="middle">视频号</text>
+    <text x="437" y="466" font-size="12" fill="#1a1a2e" text-anchor="middle">B站</text>
+  </g>
+
+  <!-- Right: line chart -->
+  <rect x="528" y="212" width="476" height="250" rx="12" fill="#ffffff" stroke="#e6e8ef"/>
+  <text x="548" y="240" font-size="15" font-weight="700" fill="#1a1a2e">粉丝净增长曲线（30 天）</text>
+  <line x1="560" y1="448" x2="988" y2="448" stroke="#e6e8ef"/>
+  <line x1="560" y1="370" x2="988" y2="370" stroke="#f0f2ff" stroke-dasharray="3 3"/>
+  <line x1="560" y1="292" x2="988" y2="292" stroke="#f0f2ff" stroke-dasharray="3 3"/>
+  <polyline points="560,448 647,420 713,393 780,361 847,325 913,297 988,273"
+    fill="none" stroke="url(#line)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <g fill="#3b5bdb">
+    <circle cx="560" cy="448" r="4"/><circle cx="647" cy="420" r="4"/><circle cx="713" cy="393" r="4"/>
+    <circle cx="780" cy="361" r="4"/><circle cx="847" cy="325" r="4"/><circle cx="913" cy="297" r="4"/>
+    <circle cx="988" cy="273" r="5" fill="#0ca678"/>
+  </g>
+  <text x="988" y="262" font-size="12" font-weight="700" fill="#0ca678" text-anchor="end">18,640</text>
+  <g font-size="11" fill="#9aa0b4">
+    <text x="560" y="466" text-anchor="middle">D0</text><text x="713" y="466" text-anchor="middle">D10</text>
+    <text x="847" y="466" text-anchor="middle">D20</text><text x="988" y="466" text-anchor="middle">D30</text>
+  </g>
+
+  <!-- Funnel -->
+  <rect x="36" y="486" width="968" height="172" rx="12" fill="#ffffff" stroke="#e6e8ef"/>
+  <text x="56" y="514" font-size="15" font-weight="700" fill="#1a1a2e">传播转化漏斗</text>
+  <g font-size="13" fill="#ffffff" font-weight="600" text-anchor="middle">
+    <rect x="70"  y="528" width="900" height="28" rx="6" fill="#3b5bdb"/>
+    <text x="520" y="547">曝光 128 万</text>
+    <rect x="210" y="564" width="620" height="28" rx="6" fill="#4c6ef5"/>
+    <text x="520" y="583">点击 38 万（CTR 29.7%）</text>
+    <rect x="380" y="600" width="280" height="28" rx="6" fill="#7048e8"/>
+    <text x="520" y="619">关注 1.86 万（4.9%）</text>
+    <rect x="450" y="636" width="140" height="28" rx="6" fill="#0ca678"/>
+    <text x="520" y="655">私域沉淀 4,200</text>
+  </g>
+
+  <text x="36" y="676" font-size="11" fill="#9aa0b4">数据为方法论示例看板，用于演示传播效果度量维度（广度 / 深度 / 复利）。</text>
+</svg>

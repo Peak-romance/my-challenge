@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>内容传播数据看板 · 30 天增长复盘</title>
+<style>
+  :root{--brand:#3b5bdb;--brand2:#7048e8;--accent:#0ca678;--ink:#1a1a2e;--sub:#5b6172;--line:#e6e8ef}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:#eef1f8;color:var(--ink);padding:28px}
+  .top{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;border-radius:14px;padding:22px 28px;margin-bottom:22px}
+  .top h1{font-size:22px}.top p{opacity:.85;font-size:13px;margin-top:6px}
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:22px}
+  .kpi{background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px 20px}
+  .kpi .l{color:var(--sub);font-size:13px}.kpi .v{font-size:30px;font-weight:800;margin:6px 0 2px}
+  .kpi .d{color:var(--accent);font-size:13px;font-weight:700}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:22px}
+  .panel{background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px 20px}
+  .panel h2{font-size:15px;margin-bottom:14px}
+  .bars{display:flex;align-items:flex-end;gap:22px;height:170px;padding:0 6px}
+  .bar{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%}
+  .bar .col{width:46px;background:linear-gradient(#5c7cfa,#3b5bdb);border-radius:6px 6px 0 0;position:relative}
+  .bar .num{position:absolute;top:-20px;left:0;right:0;text-align:center;font-size:12px;color:var(--sub)}
+  .bar .lab{font-size:12px;margin-top:8px;color:var(--ink)}
+  .funnel{display:flex;flex-direction:column;gap:8px;align-items:center;padding:6px 0}
+  .fstage{color:#fff;font-weight:600;font-size:13px;display:flex;align-items:center;justify-content:center;border-radius:6px;height:30px}
+  .f1{width:100%;background:#3b5bdb}.f2{width:70%;background:#4c6ef5}.f3{width:32%;background:#7048e8}.f4{width:16%;background:#0ca678}
+  .note{color:#9aa0b4;font-size:12px;margin-top:6px}
+  @media(max-width:760px){.kpis{grid-template-columns:repeat(2,1fr)}.row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+  <div class="top">
+    <h1>内容传播数据看板 · 30 天增长复盘</h1>
+    <p>C7 挑战交付物　|　数据周期 2026-10-05 ~ 11-03　|　指标维度：广度 / 深度 / 复利</p>
+  </div>
+
+  <div class="kpis">
+    <div class="kpi"><div class="l">总曝光量</div><div class="v">1,284,000</div><div class="d">▲ 142%</div></div>
+    <div class="kpi"><div class="l">新增关注</div><div class="v">18,640</div><div class="d">▲ 96%</div></div>
+    <div class="kpi"><div class="l">平均互动率</div><div class="v">6.8%</div><div class="d">▲ 2.1pt</div></div>
+    <div class="kpi"><div class="l">内容产出效率</div><div class="v">3.2×</div><div class="d">▲ 1.7×</div></div>
+  </div>
+
+  <div class="row">
+    <div class="panel">
+      <h2>各平台曝光量（万）</h2>
+      <div class="bars">
+        <div class="bar"><div class="col" style="height:75%"><span class="num">32</span></div><div class="lab">公众号</div></div>
+        <div class="bar"><div class="col" style="height:66%"><span class="num">28</span></div><div class="lab">知乎</div></div>
+        <div class="bar"><div class="col" style="height:95%"><span class="num">41</span></div><div class="lab">小红书</div></div>
+        <div class="bar"><div class="col" style="height:47%"><span class="num">19</span></div><div class="lab">视频号</div></div>
+        <div class="bar"><div class="col" style="height:38%"><span class="num">15</span></div><div class="lab">B站</div></div>
+      </div>
+      <p class="note">小红书为破圈主阵地，视频号待加码。</p>
+    </div>
+    <div class="panel">
+      <h2>粉丝净增长曲线（30 天）</h2>
+      <svg viewBox="0 0 400 200" width="100%" height="170">
+        <polyline points="20,180 90,150 160,120 230,88 300,56 370,28"
+          fill="none" stroke="#0ca678" stroke-width="3.5" stroke-linecap="round"/>
+        <circle cx="370" cy="28" r="5" fill="#0ca678"/>
+        <text x="370" y="20" font-size="11" fill="#0ca678" text-anchor="end" font-weight="700">18,640</text>
+        <line x1="20" y1="180" x2="380" y2="180" stroke="#e6e8ef"/>
+      </svg>
+      <p class="note">第 3 周起增速抬升，验证"稳定节奏 > 偶尔爆款"。</p>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>传播转化漏斗</h2>
+    <div class="funnel">
+      <div class="fstage f1">曝光 128 万</div>
+      <div class="fstage f2">点击 38 万（CTR 29.7%）</div>
+      <div class="fstage f3">关注 1.86 万（4.9%）</div>
+      <div class="fstage f4">私域沉淀 4,200</div>
+    </div>
+    <p class="note">数据为方法论示例看板，用于演示传播效果度量维度。</p>
+  </div>
+</body>
+</html>
