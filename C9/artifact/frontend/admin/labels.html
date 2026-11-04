@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<!--
+  页面名称：资产二维码标签（批量打印）
+  所属角色：平台管理员
+  依赖 API：GET /api/admin/assets、GET /api/assets/{id}/qrcode（公开）
+  价值：把资产二维码批量打印成标签贴到实物上，现场扫码即可在手机上打开资产详情并认领；
+       解决"实物与系统脱节、现场流转靠人工登记"的痛点。
+  说明：手机扫码需访问同一局域网地址（建议用电脑的局域网 IP 而非 localhost 打开本页）。
+-->
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>资产标签 · 公共资产闲置平台</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/js/common.css" />
+    <style>
+        /* —— 标签打印样式（独立于 Tailwind，离线 / 打印均生效）—— */
+        #print-area { display: none; }
+        .label-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+        .label-card {
+            border: 1px solid #333; border-radius: 4px; padding: 6px;
+            display: flex; gap: 8px; align-items: center; page-break-inside: avoid;
+        }
+        .label-card img { width: 70px; height: 70px; flex: 0 0 auto; }
+        .label-info { font-size: 11px; line-height: 1.45; overflow: hidden; }
+        .label-info .lname { font-weight: 700; font-size: 12px; }
+        .label-info .lno { font-family: monospace; color: #444; }
+        .label-info .lmeta { color: #666; }
+
+        @media print {
+            @page { size: A4; margin: 10mm; }
+            body { background: #fff; }
+            .app-nav, #screen, .no-print { display: none !important; }
+            #print-area { display: block !important; }
+            .print-tip { display: none !important; }
+        }
+    </style>
+</head>
+<body>
+    <!-- 屏幕界面（打印时隐藏） -->
+    <div class="page" id="screen">
+        <h1 class="page-title">资产标签（二维码批量打印）</h1>
+        <div class="page-sub">
+            勾选需要贴标的物资，生成二维码标签并打印，贴到实物上；现场用手机扫码即可打开资产详情、登录后认领。
+            <b>手机扫码请使用电脑的局域网 IP</b>（如 http://192.168.x.x:3000）打开本页，而非 localhost。
+        </div>
+
+        <div class="toolbar no-print">
+            <div class="field"><label class="label">资产名称 / 编号</label><input class="input" id="f-kw" /></div>
+            <div class="field"><label class="label">状态</label>
+                <select class="select" id="f-status">
+                    <option value="on">仅上架</option>
+                    <option value="">全部</option>
+                    <option value="off">已下架</option>
+                    <option value="disabled">已停用</option>
+                </select>
+            </div>
+            <button class="btn btn-sm" id="btn-search">搜索</button>
+            <button class="btn btn-outline btn-sm" id="btn-all">全选</button>
+            <button class="btn btn-outline btn-sm" id="btn-none">清空</button>
+        </div>
+
+        <div id="asset-list" class="no-print"></div>
+
+        <div class="no-print mt-4">
+            <button class="btn btn-sm" id="btn-print">生成并打印标签</button>
+            <span id="sel-info" class="muted" style="margin-left:10px"></span>
+        </div>
+    </div>
+
+    <!-- 打印区（屏幕上隐藏，打印时显示） -->
+    <div id="print-area"></div>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/common.js"></script>
+    <script>
+        PAIP.boot({
+            role: "admin",
+            active: "labels",
+            init: function () {
+                var box = document.getElementById("asset-list");
+                var currentList = [];
+                var kwInput = document.getElementById("f-kw");
+                var statusSel = document.getElementById("f-status");
+                var selInfo = document.getElementById("sel-info");
+
+                function load() {
+                    API.adminListAssets({
+                        keyword: kwInput.value.trim(),
+                        status: statusSel.value,
+                    })
+                        .then(render)
+                        .catch(function (e) { PAIP.toast(e.message, "error"); });
+                }
+
+                function render(list) {
+                    currentList = list || [];
+                    if (!list.length) {
+                        box.innerHTML = '<div class="empty">暂无物资</div>';
+                        return;
+                    }
+                    box.innerHTML =
+                        '<table class="table"><thead><tr>' +
+                        "<th style='width:40px'><input type='checkbox' id='chk-all' /></th>" +
+                        "<th>资产编号</th><th>名称</th><th>存放地点</th><th>管理部门</th>" +
+                        "<th>剩余</th><th>状态</th></tr></thead><tbody>" +
+                        list.map(function (a) {
+                            var checked = a.status === "on" ? "checked" : "";
+                            return (
+                                "<tr>" +
+                                "<td><input type='checkbox' class='row-chk' value='" + a.id + "' " + checked + " /></td>" +
+                                "<td class='mono'>" + PAIP.escapeHtml(a.asset_no) + "</td>" +
+                                "<td>" + PAIP.escapeHtml(a.name) + "</td>" +
+                                "<td>" + PAIP.escapeHtml(a.location || "-") + "</td>" +
+                                "<td>" + PAIP.escapeHtml(a.manage_dept || "-") + "</td>" +
+                                "<td>" + a.remaining_count + PAIP.escapeHtml(a.unit) + "</td>" +
+                                "<td>" + PAIP.statusBadge(a.status) + "</td>" +
+                                "</tr>"
+                            );
+                        }).join("") +
+                        "</tbody></table>";
+
+                    document.getElementById("chk-all").onclick = function () {
+                        document.querySelectorAll(".row-chk").forEach(function (c) {
+                            c.checked = document.getElementById("chk-all").checked;
+                        });
+                        updateSel();
+                    };
+                    document.querySelectorAll(".row-chk").forEach(function (c) {
+                        c.onchange = updateSel;
+                    });
+                    updateSel();
+                }
+
+                function selectedIds() {
+                    return Array.prototype.slice
+                        .call(document.querySelectorAll(".row-chk:checked"))
+                        .map(function (c) { return parseInt(c.value, 10); });
+                }
+
+                function updateSel() {
+                    selInfo.textContent = "已选 " + selectedIds().length + " 项";
+                }
+
+                function buildLabels() {
+                    var ids = selectedIds();
+                    if (!ids.length) {
+                        PAIP.toast("请先勾选要打印的物资", "error");
+                        return;
+                    }
+                    var byId = {};
+                    currentList.forEach(function (a) { byId[a.id] = a; });
+                    var cards = ids.map(function (id) {
+                        var a = byId[id];
+                        if (!a) return "";
+                        var qr = API.qrcodeUrl(id, location.origin, 6);
+                        return (
+                            '<div class="label-card">' +
+                            '<img src="' + PAIP.escapeHtml(qr) + '" alt="二维码" />' +
+                            '<div class="label-info">' +
+                            '<div class="lname">' + PAIP.escapeHtml(a.name) + "</div>" +
+                            '<div class="lno">' + PAIP.escapeHtml(a.asset_no) + "</div>" +
+                            '<div class="lmeta">存放：' + PAIP.escapeHtml(a.location || "-") + "</div>" +
+                            '<div class="lmeta">剩余：' + a.remaining_count + PAIP.escapeHtml(a.unit) + "</div>" +
+                            "</div></div>"
+                        );
+                    }).join("");
+                    var area = document.getElementById("print-area");
+                    area.innerHTML =
+                        '<div class="print-tip" style="margin-bottom:8px;font-size:12px;color:#666">' +
+                        "公共资产闲置平台 · 资产二维码标签（共 " + ids.length + " 项）</div>" +
+                        '<div class="label-grid">' + cards + "</div>";
+                    // 等图片就绪后打印（图片为同源接口，几乎瞬时；延时 200ms 兜底）
+                    setTimeout(function () { window.print(); }, 200);
+                }
+
+                document.getElementById("btn-search").onclick = load;
+                document.getElementById("btn-all").onclick = function () {
+                    document.querySelectorAll(".row-chk").forEach(function (c) { c.checked = true; });
+                    updateSel();
+                };
+                document.getElementById("btn-none").onclick = function () {
+                    document.querySelectorAll(".row-chk").forEach(function (c) { c.checked = false; });
+                    updateSel();
+                };
+                document.getElementById("btn-print").onclick = buildLabels;
+
+                load();
+            },
+        });
+    </script>
+</body>
+</html>
