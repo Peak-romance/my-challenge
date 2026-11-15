@@ -1,0 +1,55 @@
+{
+  "name": "weekly-review",
+  "version": "1.0.0",
+  "status": "active",
+  "description": "周期复盘：汇总最近 N 天轨迹（成功率/质量/工具分布）+ 记忆中的教训与待办",
+  "triggers": ["复盘", "周报", "回顾", "review", "这周怎么样", "总结一下"],
+  "inputs": {
+    "days": {
+      "type": "int",
+      "required": false,
+      "default": 7,
+      "desc": "回看窗口（天）"
+    }
+  },
+  "steps": [
+    {
+      "id": "now",
+      "tool": "time.now",
+      "args": {"fmt": "%Y-%m-%d %H:%M"}
+    },
+    {
+      "id": "stats",
+      "tool": "trace.stats",
+      "args": {"days": "{input.days}"}
+    },
+    {
+      "id": "tools",
+      "tool": "format.bullets",
+      "args": {"items": "{stats.top_tools}", "empty": "（窗口内无工具调用）"}
+    },
+    {
+      "id": "st",
+      "tool": "memory.state",
+      "args": {}
+    },
+    {
+      "id": "loops",
+      "tool": "format.bullets",
+      "args": {"items": "{st.open_loops}", "prefix": "- [ ] ", "empty": "（无）"}
+    },
+    {
+      "id": "lessons",
+      "tool": "memory.search",
+      "args": {"query": "失败 教训 缺口 复盘", "layer": "A", "k": 5}
+    },
+    {
+      "id": "learn",
+      "tool": "format.bullets",
+      "args": {"items": "{lessons.items}", "field": "text", "prefix": "- ", "empty": "（A 层暂无教训）"}
+    }
+  ],
+  "output": "# 周期复盘 · 最近 {input.days} 天\n\n_生成于 {now}_\n\n## 运行数据\n- 运行次数：{stats.runs}\n- 成功率：{stats.ok_rate}\n- 平均质量：{stats.avg_quality}\n- 平均耗时：{stats.avg_ms} ms\n\n### 工具使用分布\n{tools}\n\n## 未闭环事项\n{loops}\n\n## 记忆中的教训\n{learn}\n",
+  "on_error": "continue",
+  "tags": ["routine", "review"]
+}

@@ -1,0 +1,41 @@
+{
+  "name": "auto-memory-remember-memory-open-loop",
+  "version": "0.1.0",
+  "status": "proposed",
+  "description": "由 2 次轨迹自动归纳的工具序列（待人工确认语义与触发词）",
+  "triggers": [
+    "记住",
+    "写权",
+    "权限"
+  ],
+  "inputs": {
+    "focus": {
+      "type": "str",
+      "required": false,
+      "default": "",
+      "desc": "任务焦点"
+    }
+  },
+  "steps": [
+    {
+      "id": "s1",
+      "tool": "memory.remember",
+      "args": {
+        "text": "写权限边界是项目根，越界一律拒绝",
+        "tags": "cli"
+      }
+    },
+    {
+      "id": "s2",
+      "tool": "memory.open_loop",
+      "args": {
+        "text": "<从轨迹补全: text>"
+      }
+    }
+  ],
+  "output": "## 自动归纳技能输出\n\n- memory.remember: {s1}\n- memory.open_loop: {s2}",
+  "on_error": "continue",
+  "tags": [
+    "auto-mined"
+  ]
+}

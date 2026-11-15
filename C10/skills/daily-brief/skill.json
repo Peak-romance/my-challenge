@@ -1,0 +1,45 @@
+{
+  "name": "daily-brief",
+  "version": "1.0.0",
+  "status": "active",
+  "description": "生成当日简报：时间锚点 + S 层未闭环事项 + K 层关注点",
+  "triggers": ["简报", "日报", "今日简报", "今天要做什么", "brief", "morning"],
+  "inputs": {
+    "focus": {
+      "type": "str",
+      "required": false,
+      "default": "",
+      "desc": "可选：本次简报的焦点主题"
+    }
+  },
+  "steps": [
+    {
+      "id": "now",
+      "tool": "time.now",
+      "args": {"fmt": "%Y-%m-%d %A"}
+    },
+    {
+      "id": "st",
+      "tool": "memory.state",
+      "args": {}
+    },
+    {
+      "id": "loops",
+      "tool": "format.bullets",
+      "args": {"items": "{st.open_loops}", "prefix": "- [ ] ", "empty": "（无未闭环事项）"}
+    },
+    {
+      "id": "focus",
+      "tool": "memory.search",
+      "args": {"query": "简报 关注 偏好 格式 约定", "k": 3}
+    },
+    {
+      "id": "prio",
+      "tool": "format.bullets",
+      "args": {"items": "{focus.items}", "field": "text", "prefix": "- ", "empty": "（记忆层暂无关注点）"}
+    }
+  ],
+  "output": "# 今日简报 · {now}\n\n## 未闭环事项\n{loops}\n\n## 记忆中的关注点\n{prio}\n\n## 本次焦点\n{input.focus}\n",
+  "on_error": "continue",
+  "tags": ["routine", "daily"]
+}

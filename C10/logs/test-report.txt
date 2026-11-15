@@ -1,0 +1,25 @@
+[env] C10_ROOT=C:\Users\WRM\AppData\Local\Temp\c10-test-0el_p4ur
+
+L5 检索
+  PASS  t_tokenize
+  PASS  t_rank_relevance
+
+L5 记忆（KSTAR）
+  PASS  t_kstar_knowledge
+  PASS  t_kstar_lesson
+  PASS  t_kstar_state_and_trace
+  PASS  t_kstar_decay
+
+L2 工具
+  PASS  t_tool_sandbox
+
+L4 技能
+  PASS  t_skill_load_validate
+  PASS  t_render
+  PASS  t_skill_budget_guard
+
+L3 循环
+  PASS  t_end_to_end
+  PASS  t_miner
+
+结果：12 passed, 0 failed

@@ -1,0 +1,87 @@
+================================================================
+DEMO：五层贯通 + KSTAR 四层写入
+================================================================
+
+[run] run-20261115-b13fff · source=demo · session=default
+[task] 记住：C10 采用五层架构，记忆层用 KSTAR 四层分别承载知识/状态/轨迹/归档
+[recall] 5 条 (K:C10 采用五层架构，记忆层用 KS, A:任务『帮我设计一个跨部门的季度目标对, A:技能 `memorize-loop`)
+[state] turns=32 open_loops=3
+[plan] tools — 识别到『记住』意图 → 写入 K 层
+  [1] memory.remember      ok      29ms  {   "id": "k-20261115-62dd89",   "dedup": true,   "importanc
+[reflect] quality=1.00 steps=1/1 lesson=none
+────────────────────────────────────────────────────────────
+
+[run] run-20261115-d8fd50 · source=demo · session=default
+[task] 记录一下 C10 的进化路径是：每次运行落 T 层轨迹，定期挖掘重复序列抽成技能
+[recall] 5 条 (K:C10 的进化路径是：每次运行落 T, A:技能 `capture-note` , A:技能 `capture-note` )
+[state] turns=33 open_loops=3
+[plan] skill `capture-note` — 触发词命中技能 `capture-note`（score=5）
+  [1] time.now             ok       0ms  2026-11-15 14:22
+  [2] memory.remember      ok       9ms  {   "id": "k-20261115-a17c29",   "dedup": true,   "importanc
+  [3] fs.append            ok       5ms  已追加 inbox.md
+[reflect] quality=1.00 steps=3/3 lesson=success
+────────────────────────────────────────────────────────────
+
+[run] run-20261115-5a2726 · source=demo · session=default
+[task] 生成今日简报
+[recall] 1 条 (A:技能 `daily-brief` 一)
+[state] turns=34 open_loops=3
+[plan] skill `daily-brief` — 触发词命中技能 `daily-brief`（score=8）
+  [1] time.now             ok       0ms  2026-11-15 Sunday
+  [2] memory.state         ok       7ms  {   "turns": 34,   "focus": "记录一下 C10 的进化路径是：每次运行落 T 层轨迹，定期挖
+  [3] format.bullets       ok       0ms  - [ ] 给 miner 加一个 min_support=3 的回归 - [ ] 验证遗忘阈值从 0.15 调到 0.
+  [4] memory.search        ok       1ms  {   "count": 1,   "items": [     {       "id": "a-20261115-5
+  [5] format.bullets       ok       0ms  - 技能 `daily-brief` 一次通过『生成今日简报』（5 步，quality=1.0）
+[reflect] quality=1.00 steps=5/5 lesson=success
+────────────────────────────────────────────────────────────
+
+[run] run-20261115-6b662f · source=demo · session=default
+[task] 记住：写权限边界是项目根，越界一律拒绝；记个待办：验证遗忘阈值从 0.15 调到 0.2 的影响
+[recall] 5 条 (A:技能 `memorize-loop`, K:写权限边界是项目根，越界一律拒绝, K:C10 的写权限边界是项目根，越界一)
+[state] turns=35 open_loops=3
+[plan] skill `memorize-loop` — 该组合已被技能 `memorize-loop` 覆盖 → 走技能（进化闭环）
+  [1] memory.remember      ok       8ms  {   "id": "k-20261115-dc782c",   "dedup": true,   "importanc
+  [2] memory.open_loop     ok       5ms  已登记未闭环事项: 验证遗忘阈值从 0.15 调到 0.2 的影响
+[reflect] quality=1.00 steps=2/2 lesson=success
+────────────────────────────────────────────────────────────
+
+[run] run-20261115-05f0c3 · source=demo · session=default
+[task] 现在状态如何
+[recall] 3 条 (K:C10 采用五层架构，记忆层用 KS, A:任务『自检一下系统状态』的记忆召回为, A:技能 `self-check` 一次)
+[state] turns=36 open_loops=3
+[plan] tools — 识别到『状态查询』意图 → 读取 S 层
+  [1] memory.state         ok       7ms  {   "turns": 36,   "focus": "记住：写权限边界是项目根，越界一律拒绝；记个待办：验证遗忘阈值
+[reflect] quality=1.00 steps=1/1 lesson=none
+────────────────────────────────────────────────────────────
+
+[run] run-20261115-bd2a65 · source=demo · session=default
+[task] 复盘这周
+[recall] 1 条 (A:技能 `weekly-review`)
+[state] turns=37 open_loops=3
+[plan] skill `weekly-review` — 触发词命中技能 `weekly-review`（score=3）
+  [1] time.now             ok       0ms  2026-11-15 14:22
+  [2] trace.stats          ok      15ms  {   "runs": 36,   "ok_rate": 1.0,   "avg_quality": 0.986,   
+  [3] format.bullets       ok       0ms  - format.bullets ×33 - time.now ×15 - memory.remember ×14 - 
+  [4] memory.state         ok       6ms  {   "turns": 37,   "focus": "现在状态如何",   "last_task": "复盘这周",
+  [5] format.bullets       ok       0ms  - [ ] 给 miner 加一个 min_support=3 的回归 - [ ] 验证遗忘阈值从 0.15 调到 0.
+  [6] memory.search        ok       0ms  {   "count": 3,   "items": [     {       "id": "a-20261115-b
+  [7] format.bullets       ok       0ms  - 任务『巡检一下 src/tools』在 `fs.list` 处失败：目录不存在: D:\C10\workspace\
+[reflect] quality=1.00 steps=7/7 lesson=success
+────────────────────────────────────────────────────────────
+
+[run] run-20261115-3133e5 · source=demo · session=default
+[task] 自检一下系统状态
+[recall] 5 条 (A:任务『自检一下系统状态』的记忆召回为, A:技能 `self-check` 一次, K:C10 采用五层架构，记忆层用 KS)
+[state] turns=38 open_loops=3
+[plan] skill `self-check` — 触发词命中技能 `self-check`（score=8）
+  [1] time.now             ok       0ms  2026-11-15 14:22:05
+  [2] system.info          ok      17ms  {   "python": "3.13.14",   "root": "D:\\C10",   "tools": 20,
+  [3] format.bullets       ok       0ms    - capture-note   - daily-brief   - memorize-loop   - repo-
+  [4] format.bullets       ok       0ms  （无契约问题）
+  [5] format.bullets       ok       0ms  - **K_knowledge**: 7 - **K_archived**: 0 - **S_open_loops**:
+  [6] skill.mine           ok       8ms  {   "traces_analyzed": 37,   "candidates": [],   "written": 
+  [7] format.bullets       ok       0ms  （暂无达到阈值的重复序列）
+[reflect] quality=1.00 steps=7/7 lesson=success
+────────────────────────────────────────────────────────────
+
+[stats] {"K_knowledge": 7, "K_archived": 0, "S_open_loops": 3, "S_turns": 38, "T_traces": 38, "A_lessons": 15}

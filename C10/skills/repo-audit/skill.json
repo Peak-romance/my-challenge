@@ -1,0 +1,35 @@
+{
+  "name": "repo-audit",
+  "version": "1.0.0",
+  "status": "active",
+  "description": "对指定目录做一次轻量巡检：文件清单 + 可疑标记（TODO/FIXME/pass 占位）",
+  "triggers": ["巡检", "巡查", "审计", "audit", "检查目录", "扫描代码", "看看代码"],
+  "inputs": {
+    "path": {
+      "type": "str",
+      "required": false,
+      "default": ".",
+      "desc": "相对仓库根（C10/）的目录路径"
+    }
+  },
+  "steps": [
+    {
+      "id": "files",
+      "tool": "fs.list",
+      "args": {"path": "{input.path}", "limit": 30}
+    },
+    {
+      "id": "marks",
+      "tool": "fs.grep",
+      "args": {
+        "pattern": "TODO|FIXME|XXX|NotImplemented",
+        "path": "{input.path}",
+        "glob": "*.py",
+        "limit": 15
+      }
+    }
+  ],
+  "output": "# 巡检报告 · {input.path}\n\n## 文件清单\n```\n{files}\n```\n\n## 可疑标记\n```\n{marks}\n```\n",
+  "on_error": "continue",
+  "tags": ["dev", "audit"]
+}

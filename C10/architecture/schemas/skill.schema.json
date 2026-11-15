@@ -1,0 +1,68 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://c10.local/schemas/skill.schema.json",
+  "title": "C10 技能契约（skills/<name>/skill.json）",
+  "type": "object",
+  "required": ["name", "description", "steps", "output"],
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]{2,40}$",
+      "description": "小写短横线命名；技能的唯一标识"
+    },
+    "version": {"type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$", "default": "1.0.0"},
+    "status": {"type": "string", "enum": ["active", "proposed", "deprecated"], "default": "active"},
+    "description": {"type": "string", "minLength": 4, "description": "一句话说清解决什么问题"},
+    "triggers": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "description": "触发词；长度加权匹配，越专指越有效"
+    },
+    "inputs": {
+      "type": "object",
+      "description": "输入契约。required 缺失且无 default 时技能直接失败，不进入工具链。",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["type"],
+        "additionalProperties": false,
+        "properties": {
+          "type": {"type": "string", "enum": ["str", "int", "float", "bool", "dict", "list"]},
+          "required": {"type": "boolean", "default": false},
+          "default": {},
+          "desc": {"type": "string"}
+        }
+      }
+    },
+    "steps": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["tool"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Za-z][A-Za-z0-9_]*$",
+            "description": "步骤标识，供后续模板以 {id} / {id.field} 引用；缺省为 sNN"
+          },
+          "tool": {"type": "string", "description": "必须存在于工具注册表，否则装载期报契约错误"},
+          "args": {"type": "object", "description": "参数值支持模板 {step_id} / {input.x} / {a.b.c}"}
+        }
+      }
+    },
+    "output": {
+      "type": "string",
+      "minLength": 1,
+      "description": "输出模板；{{ }} 为字面量大括号；未命中变量渲染为空串"
+    },
+    "on_error": {
+      "type": "string",
+      "enum": ["abort", "continue"],
+      "default": "abort",
+      "description": "abort=原子操作；continue=聚合操作（失败步以 [ERROR] 占位继续）"
+    },
+    "tags": {"type": "array", "items": {"type": "string"}}
+  }
+}

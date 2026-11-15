@@ -1,0 +1,7 @@
+# Optional development dependencies.
+#
+# The project's own tests run on the Python standard library only
+# (unittest), so these are NOT required to validate or use the package.
+# They are provided for contributors who prefer pytest and static checks.
+pytest>=7.0
+mypy>=1.0

@@ -1,0 +1,59 @@
+{
+  "name": "capture-note",
+  "version": "1.0.0",
+  "status": "active",
+  "description": "捕获一条想法/结论：写入 K 层长期记忆，并追加到 workspace/inbox.md 留人读副本",
+  "triggers": [
+    "记录想法",
+    "记录一下",
+    "捕获",
+    "capture",
+    "存档一下",
+    "记一笔"
+  ],
+  "inputs": {
+    "text": {
+      "type": "str",
+      "required": true,
+      "desc": "要捕获的内容"
+    },
+    "tags": {
+      "type": "str",
+      "required": false,
+      "default": "inbox",
+      "desc": "逗号分隔标签"
+    }
+  },
+  "steps": [
+    {
+      "id": "now",
+      "tool": "time.now",
+      "args": {
+        "fmt": "%Y-%m-%d %H:%M"
+      }
+    },
+    {
+      "id": "saved",
+      "tool": "memory.remember",
+      "args": {
+        "text": "{input.text}",
+        "tags": "{input.tags}",
+        "importance": 0.6
+      }
+    },
+    {
+      "id": "file",
+      "tool": "fs.append",
+      "args": {
+        "path": "workspace/inbox.md",
+        "content": "\n- {now} · {input.text}"
+      }
+    }
+  ],
+  "output": "已捕获 → K 层 `{saved.id}`（dedup={saved.dedup}），并追加到 `workspace/inbox.md`\n\n内容：{input.text}",
+  "on_error": "abort",
+  "tags": [
+    "memory",
+    "capture"
+  ]
+}

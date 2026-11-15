@@ -1,0 +1,48 @@
+{
+  "name": "self-check",
+  "version": "1.0.0",
+  "status": "active",
+  "description": "系统自检：工具/技能装载状态、契约校验问题、记忆分层统计、技能挖掘候选",
+  "triggers": ["自检", "体检", "health", "self-check", "系统状态", "智能体状态", "check yourself"],
+  "inputs": {},
+  "steps": [
+    {
+      "id": "now",
+      "tool": "time.now",
+      "args": {"fmt": "%Y-%m-%d %H:%M:%S"}
+    },
+    {
+      "id": "info",
+      "tool": "system.info",
+      "args": {}
+    },
+    {
+      "id": "skills",
+      "tool": "format.bullets",
+      "args": {"items": "{info.skills}", "prefix": "  - ", "empty": "（无技能）"}
+    },
+    {
+      "id": "probs",
+      "tool": "format.bullets",
+      "args": {"items": "{info.skill_problems}", "empty": "（无契约问题）"}
+    },
+    {
+      "id": "mem",
+      "tool": "format.bullets",
+      "args": {"items": "{info.memory}", "empty": "（空）"}
+    },
+    {
+      "id": "mine",
+      "tool": "skill.mine",
+      "args": {"days": 30, "min_support": 3, "commit": false}
+    },
+    {
+      "id": "cands",
+      "tool": "format.bullets",
+      "args": {"items": "{mine.candidates}", "field": "name", "empty": "（暂无达到阈值的重复序列）"}
+    }
+  ],
+  "output": "# 系统自检 · {now}\n\n## 工具与技能\n- 已装载工具：{info.tools} 个\n- 已装载技能：\n{skills}\n\n## 契约校验\n{probs}\n\n## 记忆（KSTAR）\n{mem}\n\n## 可抽象为技能的重复序列（support≥3）\n{cands}\n\n## 预算\n- max_steps={info.budget.max_steps} / tool_timeout={info.budget.tool_timeout_s}s / max_output={info.budget.max_output_chars} 字符\n",
+  "on_error": "continue",
+  "tags": ["system", "ops"]
+}

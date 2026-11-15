@@ -1,0 +1,34 @@
+{
+  "name": "memorize-loop",
+  "version": "1.0.0",
+  "status": "active",
+  "description": "一句话同时办两件事：把事实沉淀进 K 层，把未闭环事项登记进 S 层",
+  "triggers": ["记住并记待办", "沉淀并开待办", "记下并登记待办"],
+  "inputs": {
+    "fact": {
+      "type": "str",
+      "required": true,
+      "desc": "要沉淀进 K 层的稳定事实"
+    },
+    "loop": {
+      "type": "str",
+      "required": true,
+      "desc": "要登记进 S 层的未闭环事项"
+    }
+  },
+  "steps": [
+    {
+      "id": "k",
+      "tool": "memory.remember",
+      "args": {"text": "{input.fact}", "tags": "memorize-loop", "importance": 0.7}
+    },
+    {
+      "id": "s",
+      "tool": "memory.open_loop",
+      "args": {"text": "{input.loop}"}
+    }
+  ],
+  "output": "已同时落地两件事：\n- **K 层**（{k.id}）：{input.fact}\n- **S 层未闭环**：{input.loop}\n\n_本条由挖掘器发现、人工确认后上线的技能 `memorize-loop` 执行。_",
+  "on_error": "abort",
+  "tags": ["memory", "combo", "mined-then-promoted"]
+}

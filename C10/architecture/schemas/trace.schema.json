@@ -1,0 +1,86 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://c10.local/schemas/trace.schema.json",
+  "title": "C10 T 层轨迹（memory/t/<YYYY-MM-DD>.jsonl，只追加不可变）",
+  "type": "object",
+  "required": ["run_id", "ts", "task", "plan", "steps", "ok", "quality", "ms"],
+  "additionalProperties": true,
+  "properties": {
+    "run_id": {"type": "string", "pattern": "^run-\\d{8}-[0-9a-f]{6}$"},
+    "ts": {"type": "string", "format": "date-time"},
+    "source": {"type": "string", "enum": ["cli", "repl", "http", "demo", "test", "schedule"]},
+    "session": {"type": "string"},
+    "task": {"type": "string", "minLength": 1, "description": "原始任务文本，未经改写"},
+    "planner": {"type": "string", "enum": ["rule", "llm", "unknown"]},
+    "plan": {
+      "type": "object",
+      "required": ["kind", "rationale"],
+      "properties": {
+        "kind": {"type": "string", "enum": ["skill", "tools", "answer"]},
+        "rationale": {"type": "string", "description": "为什么走这条路径——复盘的第一手材料"},
+        "skill": {"type": "string"},
+        "inputs": {"type": "object"},
+        "steps": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "tool": {"type": "string"},
+              "args": {"type": "object"}
+            }
+          }
+        },
+        "answer": {"type": "string"}
+      }
+    },
+    "recall": {
+      "type": "array",
+      "description": "本次运行实际注入上下文的记忆（含分数，可解释）",
+      "items": {
+        "type": "object",
+        "required": ["id", "layer", "score"],
+        "properties": {
+          "id": {"type": "string"},
+          "layer": {"type": "string", "enum": ["K", "A"]},
+          "score": {"type": "number"},
+          "text": {"type": "string"}
+        }
+      }
+    },
+    "steps": {
+      "type": "array",
+      "description": "实际发生的副作用，逐步留痕",
+      "items": {
+        "type": "object",
+        "required": ["i", "tool", "ok", "ms"],
+        "properties": {
+          "i": {"type": "integer", "minimum": 1},
+          "id": {"type": "string"},
+          "tool": {"type": "string"},
+          "args": {"type": "object"},
+          "ok": {"type": "boolean"},
+          "ms": {"type": "integer", "minimum": 0},
+          "out": {"type": "string", "maxLength": 400},
+          "err": {"type": "string"}
+        }
+      }
+    },
+    "steps_used": {"type": "integer", "minimum": 0, "description": "含技能内部步骤的总步数"},
+    "output": {"type": "string", "maxLength": 1200},
+    "ok": {"type": "boolean"},
+    "error": {"type": "string"},
+    "quality": {"type": "number", "minimum": 0, "maximum": 1},
+    "ms": {"type": "integer", "minimum": 0},
+    "lesson": {
+      "type": ["object", "null"],
+      "description": "本次沉淀的教训（每次至多一条，取 importance 最高者）",
+      "required": ["kind", "text", "importance"],
+      "properties": {
+        "kind": {"type": "string", "enum": ["success", "failure", "gap", "weak_skill", "recall_miss"]},
+        "text": {"type": "string"},
+        "action": {"type": "string"},
+        "importance": {"type": "number", "minimum": 0, "maximum": 1}
+      }
+    }
+  }
+}

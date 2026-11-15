@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>C10 · 第二大脑：五层架构与 KSTAR 记忆</title>
+<style>
+  :root{
+    --bg:#f6f7f9; --card:#ffffff; --ink:#15181d; --sub:#5a6270; --line:#e3e6ec;
+    --l1:#4b6bfb; --l2:#0e9f8e; --l3:#c07617; --l4:#8b5cf6; --l5:#d94f6b;
+    --l1bg:#eef1ff; --l2bg:#e6f7f4; --l3bg:#fdf3e3; --l4bg:#f3edff; --l5bg:#fdeef1;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+       font-family:-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+       line-height:1.6;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1080px;margin:0 auto;padding:46px 28px 72px}
+  header{border-bottom:1px solid var(--line);padding-bottom:22px;margin-bottom:38px}
+  .eyebrow{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--sub);margin-bottom:10px}
+  h1{font-size:31px;margin:0 0 10px;letter-spacing:-.02em}
+  .lede{color:var(--sub);font-size:15px;max-width:74ch;margin:0}
+  h2{font-size:19px;margin:52px 0 6px;letter-spacing:-.01em}
+  h2 .num{font-variant-numeric:tabular-nums;color:var(--sub);font-weight:500;margin-right:8px}
+  .hint{color:var(--sub);font-size:13.5px;margin:0 0 20px;max-width:78ch}
+
+  .stack{display:grid;gap:10px}
+  .layer{display:grid;grid-template-columns:150px 1fr 260px;gap:18px;align-items:center;
+         background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;
+         border-left:4px solid var(--c);position:relative}
+  .layer .tag{font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--c)}
+  .layer .name{font-size:15px;font-weight:650;margin-top:2px}
+  .layer .impl{font-family:ui-monospace,Consolas,monospace;font-size:11.5px;color:var(--sub);margin-top:4px}
+  .layer .what{font-size:13.5px}
+  .layer .what b{font-weight:650}
+  .layer .contract{font-size:12px;color:var(--sub);border-left:1px dashed var(--line);padding-left:14px}
+  .layer .contract em{font-style:normal;color:var(--c);font-weight:600}
+  .l1{--c:var(--l1);background:var(--l1bg)}
+  .l2{--c:var(--l2);background:var(--l2bg)}
+  .l3{--c:var(--l3);background:var(--l3bg)}
+  .l4{--c:var(--l4);background:var(--l4bg)}
+  .l5{--c:var(--l5);background:var(--l5bg)}
+  .arrow{text-align:center;color:#c3c8d2;font-size:15px;line-height:.4;margin:-2px 0}
+
+  .flow{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-top:6px}
+  .beat{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 10px;text-align:center}
+  .beat .i{font-size:10.5px;color:var(--sub);letter-spacing:.08em}
+  .beat .n{font-size:13px;font-weight:650;margin:3px 0 4px}
+  .beat .d{font-size:11.5px;color:var(--sub);line-height:1.45}
+
+  .kstar{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .k{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;border-top:3px solid var(--c)}
+  .k .hd{display:flex;align-items:baseline;gap:9px;margin-bottom:6px}
+  .k .lt{font-size:19px;font-weight:750;color:var(--c)}
+  .k .nm{font-size:13.5px;font-weight:650}
+  .k .q{font-size:13px;color:var(--sub);margin:0 0 10px}
+  .k ul{margin:0;padding-left:17px;font-size:12.5px;color:#333a44}
+  .k li{margin:2px 0}
+  .k .file{font-family:ui-monospace,Consolas,monospace;font-size:11px;color:var(--sub);margin-top:10px;
+           border-top:1px solid var(--line);padding-top:8px}
+  .kK{--c:#2563eb}.kS{--c:#0e9f8e}.kT{--c:#b45309}.kA{--c:#be123c}
+
+  .loopfig{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:22px}
+  .chips{display:flex;flex-wrap:wrap;align-items:center;gap:9px;font-size:12.5px}
+  .chip{background:#f1f3f7;border:1px solid var(--line);border-radius:999px;padding:6px 13px;white-space:nowrap}
+  .chip.hl{background:#fff7ed;border-color:#f3d3a8;color:#8a4b0a;font-weight:600}
+  .chip.gate{background:#fdeef1;border-color:#f0c3cd;color:#a3123c;font-weight:600}
+  .sep{color:#b8bec9}
+  .note{font-size:12px;color:var(--sub);margin-top:14px;border-left:2px solid var(--line);padding-left:11px}
+
+  table{width:100%;border-collapse:collapse;font-size:12.5px;background:var(--card);
+        border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{background:#f2f4f8;font-size:11.5px;letter-spacing:.04em;color:var(--sub);font-weight:600}
+  tr:last-child td{border-bottom:none}
+  code{font-family:ui-monospace,Consolas,monospace;font-size:11.5px;background:#f1f3f7;
+       padding:1px 5px;border-radius:4px}
+  .metrics{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+  .m{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 12px;text-align:center}
+  .m .v{font-size:22px;font-weight:750;letter-spacing:-.02em}
+  .m .l{font-size:11px;color:var(--sub);margin-top:2px}
+  footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--line);font-size:12px;color:var(--sub)}
+  @media (max-width:900px){
+    .layer{grid-template-columns:1fr;gap:8px}
+    .layer .contract{border-left:none;border-top:1px dashed var(--line);padding-left:0;padding-top:8px}
+    .flow{grid-template-columns:repeat(2,1fr)}
+    .kstar{grid-template-columns:1fr}
+    .metrics{grid-template-columns:repeat(3,1fr)}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="eyebrow">C10 · Build Your Own Agent</div>
+  <h1>第二大脑：五层架构与 KSTAR 记忆</h1>
+  <p class="lede">一个可运行、可审计、会进化的长期智能体。核心主张：<b>智能体的价值不在单次回答的质量，而在跨会话的存续能力</b>——记忆不丢、经验沉淀、重复劳动被自动抽象。</p>
+</header>
+
+<h2><span class="num">01</span>五层架构</h2>
+<p class="hint">分层的判据只有一个：<b>能不能在不改下层的前提下换掉这一层？</b>五层均通过——换接口只动 L1，换检索只动 L5，换规划器只动 L3（LLM 规划器已实现且失败自动降级）。</p>
+
+<div class="stack">
+  <div class="layer l1">
+    <div><div class="tag">L1 · INTERFACE</div><div class="name">接口</div><div class="impl">src/interfaces/</div></div>
+    <div class="what">CLI · REPL · HTTP。把外部输入规范化为一次 <code>run()</code>，再把结果格式化回去。<b>不含任何规划、记忆、工具逻辑。</b></div>
+    <div class="contract">契约：<em>输入文本 → RunResult</em><br>判据：删掉这一层，内核仍然完好</div>
+  </div>
+  <div class="arrow">▲</div>
+  <div class="layer l2">
+    <div><div class="tag">L2 · TOOLS</div><div class="name">工具</div><div class="impl">src/tools/ · 20 个</div></div>
+    <div class="what">智能体唯一的"手"。fs / memory / skill / shell / http / format。<b>所有副作用必经此处</b>，因此"它到底动了什么"永远可审计。</div>
+    <div class="contract">契约：<em>声明式参数 + danger 分级 + 路径沙箱</em><br>铁律：禁止静默失败</div>
+  </div>
+  <div class="arrow">▲</div>
+  <div class="layer l3">
+    <div><div class="tag">L3 · LOOP</div><div class="name">循环</div><div class="impl">src/core/loop.py</div></div>
+    <div class="what">perceive → recall → plan → act → observe → reflect → persist。<b>只做分发、守预算、记账</b>，业务逻辑一律下沉，避免上帝对象。</div>
+    <div class="contract">契约：<em>永远返回 RunResult，失败不抛异常</em><br>预算：步数 / 超时 / 输出三重熔断</div>
+  </div>
+  <div class="arrow">▲</div>
+  <div class="layer l4">
+    <div><div class="tag">L4 · SKILLS</div><div class="name">技能</div><div class="impl">skills/ · 6 个上线</div></div>
+    <div class="what">把重复任务固化为声明式契约（<code>skill.json</code> + <code>SKILL.md</code>）。可校验、可组合、可被挖掘、可被替换。<b>技能里没有代码。</b></div>
+    <div class="contract">契约：<em>步骤 + 输入 + 错误策略 + 输出模板</em><br>演化：挖掘草案 → 人工闸门 → 上线</div>
+  </div>
+  <div class="arrow">▲</div>
+  <div class="layer l5">
+    <div><div class="tag">L5 · MEMORY</div><div class="name">记忆（KSTAR）</div><div class="impl">src/memory/</div></div>
+    <div class="what">四层记忆：知识 / 状态 / 轨迹 / 归档。写入有策略、读取有排序、定期有巩固与遗忘。<b>越用越准</b>，而不是越用越乱。</div>
+    <div class="contract">契约：<em>KStar 是唯一读写入口</em><br>铁律：T 层只追加、A 层必带证据</div>
+  </div>
+</div>
+
+<h2><span class="num">02</span>一次运行的七节拍</h2>
+<p class="hint">每一步都产出可记录的观测，因此<b>一次运行 = 一条可回放的轨迹</b>。轨迹里同时保留"想干什么（plan）、依据什么（recall）、实际动了什么（steps）"。</p>
+
+<div class="flow">
+  <div class="beat"><div class="i">01</div><div class="n">perceive</div><div class="d">任务规范化<br>S 层 turns+1</div></div>
+  <div class="beat"><div class="i">02</div><div class="n">recall</div><div class="d">K/A 检索 top-5<br>命中即强化</div></div>
+  <div class="beat"><div class="i">03</div><div class="n">plan</div><div class="d">五级优先级<br>@技能→多意图→…</div></div>
+  <div class="beat"><div class="i">04</div><div class="n">act</div><div class="d">技能或工具序列<br>逐步预算检查</div></div>
+  <div class="beat"><div class="i">05</div><div class="n">observe</div><div class="d">steps 记录<br>args/ms/ok/out</div></div>
+  <div class="beat"><div class="i">06</div><div class="n">reflect</div><div class="d">quality 评分<br>至多 1 条教训</div></div>
+  <div class="beat"><div class="i">07</div><div class="n">persist</div><div class="d">写 T / 条件写 A<br>更新 S 焦点</div></div>
+</div>
+
+<h2><span class="num">03</span>KSTAR 四层记忆</h2>
+<p class="hint">四层不是四种数据格式，而是<b>四个不同的问题</b>。问题不同，写入权限就不同——这是防止记忆退化成"第二份笔记堆"的关键。</p>
+
+<div class="kstar">
+  <div class="k kK">
+    <div class="hd"><span class="lt">K</span><span class="nm">Knowledge · 知识</span></div>
+    <p class="q">"关于这个世界/这个人，什么是稳定成立的？"</p>
+    <ul>
+      <li>只接受<b>显式写入</b>，不允许系统"顺手猜一条"</li>
+      <li>同文去重：重复只加权，不重复膨胀</li>
+      <li>闲置衰减 + 归档（不物理删除）</li>
+    </ul>
+    <div class="file">memory/k/knowledge.jsonl</div>
+  </div>
+  <div class="k kS">
+    <div class="hd"><span class="lt">S</span><span class="nm">State · 状态</span></div>
+    <p class="q">"此刻在做什么？什么还没闭环？"</p>
+    <ul>
+      <li>每轮自动更新，只收结构化字段</li>
+      <li>未闭环事项归一化去重（同一件事只登记一次）</li>
+      <li>容量上限：recent 10 / open_loops 12</li>
+    </ul>
+    <div class="file">memory/s/state.json</div>
+  </div>
+  <div class="k kT">
+    <div class="hd"><span class="lt">T</span><span class="nm">Trajectory · 轨迹</span></div>
+    <p class="q">"上次到底发生了什么？"</p>
+    <ul>
+      <li>全量追加，<b>任何路径不得回改</b></li>
+      <li>按天分片，可回放、可挖掘</li>
+      <li>不进上下文（只用于复盘与进化）</li>
+    </ul>
+    <div class="file">memory/t/&lt;date&gt;.jsonl</div>
+  </div>
+  <div class="k kA">
+    <div class="hd"><span class="lt">A</span><span class="nm">Archive · 归档（R=Reflection）</span></div>
+    <p class="q">"从那次经历里学到了什么？"</p>
+    <ul>
+      <li>只能由反思模块写入，每次至多 1 条</li>
+      <li><b>必须带 evidence</b>：指回 T 层 run_id</li>
+      <li>同类同文合并加权，防教训灌水</li>
+    </ul>
+    <div class="file">memory/a/lessons.jsonl</div>
+  </div>
+</div>
+
+<h2><span class="num">04</span>三个闭环：为什么它是基础设施</h2>
+<p class="hint">一个"项目"完成任务就结束；一个"基础设施"必须在使用中变强。这里的变强不是宣言，而是三条可观测的回路。</p>
+
+<div class="loopfig">
+  <div class="chips">
+    <span class="chip">运行任务</span><span class="sep">→</span>
+    <span class="chip">T 层轨迹（工具序列签名）</span><span class="sep">→</span>
+    <span class="chip">挖掘器：support ≥ 2</span><span class="sep">→</span>
+    <span class="chip hl">技能草案 _proposed/</span><span class="sep">→</span>
+    <span class="chip gate">人工确认语义 / 补参数</span><span class="sep">→</span>
+    <span class="chip">--promote 上线</span><span class="sep">→</span>
+    <span class="chip hl">下次同指令直接走技能</span>
+  </div>
+  <p class="note"><b>实测案例</b>：几条"记住 + 记待办"的组合指令 → 挖掘出草案 <code>auto-memory-remember-memory-open-loop</code> → 人工确认后上线为 <code>memorize-loop</code> → 此后同类指令的 trace 中 plan 直接显示「该组合已被技能覆盖 → 走技能（进化闭环）」。</p>
+  <table style="margin-top:16px">
+    <tr><th style="width:120px">闭环</th><th style="width:210px">信号</th><th>动作</th><th style="width:230px">证据</th></tr>
+    <tr><td><b>记忆闭环</b></td><td>召回命中 / 未命中</td><td>命中强化权重；未命中登记 <code>recall_miss</code> 暴露知识缺口</td><td>K 层 <code>use_count</code> 递增</td></tr>
+    <tr><td><b>能力闭环</b></td><td>相同工具序列重复</td><td>生成草案 → 人工闸门 → 上线为技能</td><td><code>logs/mining-report.md</code></td></tr>
+    <tr><td><b>契约闭环</b></td><td>技能引用坏工具 / 输入缺失</td><td>装载期告警隔离；自检技能显性暴露</td><td><code>self-check</code> 的「契约校验」段</td></tr>
+  </table>
+</div>
+
+<h2><span class="num">05</span>运行边界与可审计性</h2>
+<table>
+  <tr><th style="width:150px">维度</th><th>策略</th><th style="width:290px">为什么这样设计</th></tr>
+  <tr><td>路径</td><td>相对路径一律相对项目根 <code>C10/</code>；越界拒绝。读、写同界。</td><td>"读得到但写不进"的割裂会让技能无法自证（曾导致巡检解析到不存在的目录）</td></tr>
+  <tr><td>危险分级</td><td><code>danger 0/1/2</code>：只读 / 写 / 执行；2 需显式授权</td><td>把"能做什么"变成声明，而不是靠人记住</td></tr>
+  <tr><td>命令</td><td>首命令白名单（python / git / ls / grep…），其余拒绝</td><td>白名单比黑名单更可维护</td></tr>
+  <tr><td>预算</td><td>步数 30 / 单工具 20s / 单次 180s / 输出 4000 字</td><td>失控的工具链比失败的任务更贵</td></tr>
+  <tr><td>审计</td><td>每条轨迹固定含 run_id / plan / recall / steps / lesson</td><td>事后能回答"想干什么、依据什么、动了什么、学到什么"</td></tr>
+</table>
+
+<h2><span class="num">06</span>交付时快照</h2>
+<div class="metrics">
+  <div class="m"><div class="v">5</div><div class="l">架构层</div></div>
+  <div class="m"><div class="v">4</div><div class="l">记忆层（KSTAR）</div></div>
+  <div class="m"><div class="v">20</div><div class="l">声明式工具</div></div>
+  <div class="m"><div class="v">6</div><div class="l">上线技能</div></div>
+  <div class="m"><div class="v">12/12</div><div class="l">契约测试通过</div></div>
+  <div class="m"><div class="v">0</div><div class="l">第三方依赖</div></div>
+</div>
+
+<footer>
+  C10 · 第二大脑 · 五层长期智能体 · 入口 <code>AGENT.md</code> · 架构 <code>architecture/ARCHITECTURE.md</code> · 复盘 <code>AAR/AAR.md</code> · AI 使用日志 <code>AI日志/AI日志.md</code><br>
+  本页为静态自包含页面，可直接双击打开；无外部资源、无脚本依赖。
+</footer>
+
+</div>
+</body>
+</html>
