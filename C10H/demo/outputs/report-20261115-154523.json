@@ -1,0 +1,86 @@
+﻿[
+    {
+        "Id":  "A1",
+        "Name":  "hermes.exe 已发布",
+        "Pass":  true,
+        "Evidence":  "C:\\Users\\WRM\\AppData\\Local\\hermes\\bin\\hermes.exe"
+    },
+    {
+        "Id":  "A2",
+        "Name":  "版本号 = v0.23.1",
+        "Pass":  true,
+        "Evidence":  "Hermes Agent v0.23.1 (2026.9.24) · stable · local 3b4215785882"
+    },
+    {
+        "Id":  "A3",
+        "Name":  "代码检出 = 锁定提交",
+        "Pass":  true,
+        "Evidence":  "HEAD=3b421578588243f920886e6fe79a6faa87ea026e"
+    },
+    {
+        "Id":  "A4",
+        "Name":  "运行时 Python 3.14.9",
+        "Pass":  true,
+        "Evidence":  "Python 3.14.9"
+    },
+    {
+        "Id":  "A5",
+        "Name":  "工具库 9 件套齐备",
+        "Pass":  true,
+        "Evidence":  "12 项: chromium-1208, cua-driver-0.21.0-win32-x64, fetch-b365da794b1d2225eb24d5f5e09ef7792cfd5fa26c3a3586210280c80dff3a2a, ffmpeg-9.0.1-win32-x64, git-2.53.0+3-win32-x64, git-2.56.1+1-win32-x64, node-26.12.1-win32-x64, npm-12.0.2-win32-x64, pnpm-12.15.0-win32-x64, python-3.14.9+20261021-win32-x64, ripgrep-15.2.0-win32-x64, uv-0.13.5-win32-x64"
+    },
+    {
+        "Id":  "A6",
+        "Name":  "config.yaml 存在且版本正确",
+        "Pass":  true,
+        "Evidence":  "path=C:\\Users\\WRM\\AppData\\Local\\hermes\\config.yaml  _config_version=53"
+    },
+    {
+        "Id":  "A7",
+        "Name":  "USER.md 画像已写入",
+        "Pass":  true,
+        "Evidence":  "C:\\Users\\WRM\\AppData\\Local\\hermes\\memories\\USER.md  1001 chars  锚点命中=True"
+    },
+    {
+        "Id":  "A8",
+        "Name":  "MEMORY.md 环境事实已写入",
+        "Pass":  true,
+        "Evidence":  "C:\\Users\\WRM\\AppData\\Local\\hermes\\memories\\MEMORY.md  1393 chars  锚点命中=True"
+    },
+    {
+        "Id":  "A9",
+        "Name":  "SOUL.md 已本机定制",
+        "Pass":  true,
+        "Evidence":  "包含「本机定制」段落"
+    },
+    {
+        "Id":  "A10",
+        "Name":  "自定义技能已注册",
+        "Pass":  true,
+        "Evidence":  "skills list 命中 c10h-delivery-audit (local/enabled)"
+    },
+    {
+        "Id":  "A11",
+        "Name":  "定时任务已创建",
+        "Pass":  true,
+        "Evidence":  "job=de7e53f5db3b  每日09:00 Asia/Shanghai  no-agent"
+    },
+    {
+        "Id":  "A12",
+        "Name":  "审计脚本可独立运行",
+        "Pass":  true,
+        "Evidence":  "| C10H | 6/6 | 27 | 0.19 | — |"
+    },
+    {
+        "Id":  "A13",
+        "Name":  ".env 无明文密钥泄漏",
+        "Pass":  true,
+        "Evidence":  "已赋值变量 11 个，无明文密钥"
+    },
+    {
+        "Id":  "A14",
+        "Name":  "doctor 关键检查项通过",
+        "Pass":  true,
+        "Evidence":  "security=True  python=True  config=True"
+    }
+]
